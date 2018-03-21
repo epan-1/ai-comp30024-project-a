@@ -59,6 +59,7 @@ def check_left(coordinates, i, j):
             return 1
     else:
         #test comment
+        #another test
         return 0
 
 

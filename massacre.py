@@ -122,6 +122,8 @@ def number_of_blacks(coordinates):
                 no_of_blacks += 1
     return no_of_blacks
 
+# Whites and blacks are going to decrease
+
 
 def find_position_of_whites(coordinates):
     white_pos = [[0 for x in range(12)] for y in range(2)]
@@ -167,7 +169,7 @@ def find_most_relevant_white(coordinates):
 
 
 
-        # To do
+# To do
 # It is easy to implement an iterative deepening search
 # IDS: Start with depth = 1
 # for each white piece, move through each possible move, store board structure for each?

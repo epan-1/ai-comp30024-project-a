@@ -1,121 +1,3 @@
-
-
-def read():
-    line = [0 for x in range(9)]
-    for index in range(9):
-        line[index] = input()
-    return line
-
-def store(line):
-    # Create 8x8 matrix
-    w, h = 8, 8
-    coordinates = [[0 for x in range(w)] for y in range(h)]
-    for index in range(0, 8):
-        i = 0
-        for charIndex in range(0, len(line[index])):
-            coordinates[index][i] = line[index][charIndex]
-            i += 1
-    return coordinates
-
-
-# Delete this
-
-
-def printer(coordinates):
-    for i in range(0, 8):
-        for j in range(0, 8):
-            print(coordinates[i][j], end='')
-        print('')
-    return
-
-
-# Moves
-
-
-def check_up(coordinates, i, j):
-    if i != 0 and coordinates[i - 1][j] == '-':
-        return 1
-    elif i != 0 and (coordinates[i - 1][j] == 'O' or coordinates[i - 1][j] == '@'):
-        if i != 1 and coordinates[i - 2][j] == '-':
-            return 1
-    else:
-        return 0
-
-
-def check_down(coordinates, i, j):
-    if i != 7 and coordinates[i + 1][j] == '-':
-        return 1
-    elif i != 7 and (coordinates[i + 1][j] == 'O' or coordinates[i + 1][j] == '@'):
-        if i != 6 and coordinates[i + 2][j] == '-':
-            return 1
-    else:
-        return 0
-
-
-def check_left(coordinates, i, j):
-    if j != 0 and coordinates[i][j - 1] == '-':
-        return 1
-    elif j != 0 and (coordinates[i][j - 1] == 'O' or coordinates[i][j - 1] == '@'):
-        if j != 1 and coordinates[i][j - 2] == '-':
-            return 1
-    else:
-        #test something
-        #another test
-        return 0
-
-
-def check_right(coordinates, i, j):
-    if j != 7 and coordinates[i][j + 1] == '-':
-        return 1
-    elif j != 7 and (coordinates[i][j + 1] == 'O' or coordinates[i][j + 1] == '@'):
-        if j != 6 and coordinates[i][j + 2] == '-':
-            return 1
-    else:
-        return 0
-
-
-def moves(coordinates):
-    white_count = 0
-    black_count = 0
-    for i in range(0, 8):
-        for j in range(0, 8):
-            # white first
-            if coordinates[i][j] == 'O':
-                # Check all cardinal directions for '-' and 'O' and '@' for jumps
-                # Check up
-                if check_up(coordinates, i, j):
-                    white_count += 1
-                # Check down
-                if check_down(coordinates, i, j):
-                    white_count += 1
-                # Check left
-                if check_left(coordinates, i, j):
-                    white_count += 1
-                # Check right
-                if check_right(coordinates, i, j):
-                    white_count += 1
-
-            # then same thing for black
-            if coordinates[i][j] == '@':
-                # Check all cardinal directions for '-' and 'O' and '@' for jumps
-                # Check up
-                if check_up(coordinates, i, j):
-                    black_count += 1
-                # Check down
-                if check_down(coordinates, i, j):
-                    black_count += 1
-                # Check left
-                if check_left(coordinates, i, j):
-                    black_count += 1
-                # Check right
-                if check_right(coordinates, i, j):
-                    black_count += 1
-    print(white_count)
-    print(black_count)
-    return
-
-
-# -------------------------------------------------------
 # Massacre
 
 # This is a linked list (for storing board states for DFS
@@ -228,6 +110,7 @@ def move_right(coordinates, i, j):
             swap(coordinates, i, j, i, j + 2)
     return
 
+
 # ------------------------
 
 
@@ -248,7 +131,20 @@ def find_position_of_whites(coordinates):
             if coordinates[i][j] == 'O':
                 white_pos[white_number][0] = i
                 white_pos[white_number][1] = j
+                white_number += 1
     return white_pos
+
+
+def find_position_of_blacks(coordinates):
+    black_pos = [[0 for x in range(12)] for y in range(2)]
+    black_number = 0;
+    for i in range(0, 8):
+        for j in range(0, 8):
+            if coordinates[i][j] == 'O':
+                black_pos[black_number][0] = i
+                black_pos[black_number][1] = j
+                black_number += 1
+    return black_pos
 
 
 # To do
@@ -279,7 +175,7 @@ def massacre(coordinates):
     '''
     depth = 0
     IDDFS(coordinates)
-    
+
     (Probably store positions of white pieces)
 
     function DLS(node, depth)
@@ -291,13 +187,13 @@ def massacre(coordinates):
                 if found ≠ null
                  return found
         return null
-    
+
     function IDDFS(root)
         for depth from 0 to ∞
             found ← DLS(root, depth)
             if found ≠ null
                 return found
-    
+
     -------      
     function DLS(temp_coordinates, depth, white_positions)
         if depth = 0 and node is a goal
@@ -308,17 +204,16 @@ def massacre(coordinates):
                 if found ≠ null
                  return found
         return null
-    
+
     function IDDFS(temp_coordinates, white_positions)
         while(1)
             if DLS(temp_coordinates, depth, white_positions)
                 return true
         return false
     -------
-                
-                
-    '''
 
+
+    '''
 
     # if check_killed(coordinates, i, j):
     # kill(coordinates, i, j)
@@ -327,29 +222,3 @@ def massacre(coordinates):
     # Loop something
     # For each move, check adjacent blacks, check_killed
     return
-
-
-def selection(coordinates):
-    if line[8] == 'Moves':
-        moves(coordinates)
-    elif line[8] == 'Massacre':
-        massacre(coordinates)
-    else:
-        print('Error')
-    return
-
-
-# How do we store this data in a meaningful way
-# Coordinates? - array[][]
-
-
-line = read()
-coordinates = store(line)
-
-# This is just a check that it reads correctly
-# PLEASE DELETE
-# --------------------------------------------
-printer(coordinates)
-# --------------------------------------------
-
-selection(coordinates)

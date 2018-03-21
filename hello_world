@@ -4,7 +4,6 @@ def read():
         line[index] = input()
     return line
 
-
 def store(line):
     # Create 8x8 matrix
     w, h = 8, 8

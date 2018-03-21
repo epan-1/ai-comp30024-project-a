@@ -58,7 +58,7 @@ def check_left(coordinates, i, j):
         if j != 1 and coordinates[i][j - 2] == '-':
             return 1
     else:
-        #test comment
+        #test else
         #another test
         return 0
 

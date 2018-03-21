@@ -147,6 +147,7 @@ def find_position_of_blacks(coordinates):
     return black_pos
 
 
+
 # To do
 # It is easy to implement an iterative deepening search
 # IDS: Start with depth = 1

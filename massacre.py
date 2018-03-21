@@ -125,7 +125,7 @@ def number_of_blacks(coordinates):
 
 def find_position_of_whites(coordinates):
     white_pos = [[0 for x in range(12)] for y in range(2)]
-    white_number = 0;
+    white_number = 0
     for i in range(0, 8):
         for j in range(0, 8):
             if coordinates[i][j] == 'O':
@@ -137,7 +137,7 @@ def find_position_of_whites(coordinates):
 
 def find_position_of_blacks(coordinates):
     black_pos = [[0 for x in range(12)] for y in range(2)]
-    black_number = 0;
+    black_number = 0
     for i in range(0, 8):
         for j in range(0, 8):
             if coordinates[i][j] == 'O':
@@ -147,8 +147,27 @@ def find_position_of_blacks(coordinates):
     return black_pos
 
 
+def distance_to_black(coordinates, i, j):
+    distance = 100
+    blacks = find_position_of_blacks(coordinates)
+    for x in range(number_of_blacks(coordinates)):
+        if abs(blacks[x][0] - i) + abs(blacks[x][1] - j) < distance:
+            distance = abs(blacks[x][0] - i) + abs(blacks[x][1] - j)
+    return distance
 
-# To do
+
+def find_most_relevant_white(coordinates):
+    whites = find_position_of_whites(coordinates)
+    lowest_distance = 100
+    for x in range(number_of_blacks(coordinates)):
+        if distance_to_black(coordinates, whites[x][0], whites[x][1]) < lowest_distance:
+            lowest_distance = distance_to_black(coordinates, whites[x][0], whites[x][1])
+            lowest_distance_white = whites[x]
+    return lowest_distance_white
+
+
+
+        # To do
 # It is easy to implement an iterative deepening search
 # IDS: Start with depth = 1
 # for each white piece, move through each possible move, store board structure for each?

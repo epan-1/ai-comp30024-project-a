@@ -273,7 +273,7 @@ def check_closer(temp_coordinates, i, j, blacks):
     if distance_to_black(temp_coordinates, new_coords[0], new_coords[1], blacks) < checker:
         return temp_coordinates
 
-# Depth limited search
+# Depth limited search 
 
 
 def dls(temp_coordinates, depth, white_positions):

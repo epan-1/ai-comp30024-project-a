@@ -150,7 +150,7 @@ def number_of_whites(coordinates):
     no_of_whites = 0
     for i in range(0, 8):
         for j in range(0, 8):
-            if coordinates[i][j] == '@':
+            if coordinates[i][j] == 'O':
                 no_of_whites += 1
     return no_of_whites
 

@@ -8,7 +8,7 @@
 ###
 
 # Import all related modules
-from data_structure import *
+from board_state import *
 
 # Read the initial state of the board from stdin
 initial_state = BoardState('I')

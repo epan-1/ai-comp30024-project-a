@@ -21,7 +21,7 @@ class Move:
         :param row: The row number this move refers to
         """
         # Check if the move is valid before creating the object
-        if self.is_valid(board_state, col, row, new_col, new_row):
+        if self.__is_valid__(board_state, col, row, new_col, new_row):
             self.curr_col = col
             self.curr_row = row
             self.new_col = new_col
@@ -60,7 +60,7 @@ class Move:
         return line
 
     @classmethod
-    def is_valid(cls, board_state, col, row, new_col, new_row):
+    def __is_valid__(cls, board_state, col, row, new_col, new_row):
         """
         This function checks if the current move being created is valid
         :param board_state:
@@ -72,19 +72,35 @@ class Move:
             return False
         else:
             # Check if the new coords are valid
-            if cls.__check_up__(board_state, col, row, new_col, new_row):
-                return True
-            elif cls.__check_down__(board_state, col, row, new_col, new_row):
-                return True
-            elif cls.__check_left__(board_state, col, row, new_col, new_row):
-                return True
-            elif cls.__check_right__(board_state, col, row, new_col, new_row):
-                return True
-            else:
-                return False
+            out = cls.check_up(board_state, col, row)
+            if out:
+                if out[0] == new_col and out[1] == new_row:
+                    return True
+                else:
+                    return False
+            out = cls.check_down(board_state, col, row)
+            if out:
+                if out[0] == new_col and out[1] == new_row:
+                    return True
+                else:
+                    return False
+            out = cls.check_left(board_state, col, row)
+            if out:
+                if out[0] == new_col and out[1] == new_row:
+                    return True
+                else:
+                    return False
+            out = cls.check_right(board_state, col, row)
+            if out:
+                if out[0] == new_col and out[1] == new_row:
+                    return True
+                else:
+                    return False
+            # Otherwise return False
+            return False
 
     @classmethod
-    def __check_up__(cls, board_state, col, row, new_col, new_row):
+    def check_up(cls, board_state, col, row):
         """
         Function checks if the current move is allowed to move up one space
         or can legally jump
@@ -94,30 +110,24 @@ class Move:
         # Ensure that it's not at the very top of the board, and there is at
         # least 1 space to allow it to move upwards
         if row != 0 and board_state.board[col][row - 1] == '-':
-            # If the jump coords match the new specified move coords, then
-            # it is valid
-            if col == new_col and row-1 == new_row:
-                return True
-            else:
-                return False
+            return col, row-1
         # Check that if there is a space and it is occupied by a black or white
         # piece that there is space to allow the current piece to jump
         elif row != 0 and (
                     board_state.board[col][row - 1] == 'O' or
                     board_state.board[col][row - 1] == '@'):
+            # Make sure its not on the second row of the board otherwise
+            # there would be no more board left after you jumped over the piece
             if row != 1 and board_state.board[col][row - 2] == '-':
-                # If the jump coords match the new specified move coords, then
-                # it is valid
-                if col == new_col and row-2 == new_row:
-                    return True
-                else:
-                    return False
+                return col, row-2
+            else:
+                return False
         else:
             # Otherwise the piece is not allowed to move upwards
             return False
 
     @classmethod
-    def __check_down__(cls, board_state, col, row, new_col, new_row):
+    def check_down(cls, board_state, col, row):
         """
         Function checks if the current move is allowed to move down one space
         or can legally jump
@@ -128,30 +138,25 @@ class Move:
         # least 1 space to allow it to move downwards
         if row != board_state.NUM_ROWS-1 and \
                 board_state.board[col][row + 1] == '-':
-            # If the jump coords match the new specified move coords, then
-            # it is valid
-            if col == new_col and row+1 == new_row:
-                return True
-            else:
-                return False
+            return col, row+1
         # Check that if there is a space and it is occupied by a black or white
         # piece that there is space to allow the current piece to jump
-        elif row != board_state.NUM_ROWS and (
+        elif row != board_state.NUM_ROWS-1 and (
                         board_state.board[col][row + 1] == 'O' or
                         board_state.board[col][row + 1] == '@'):
-            if row != 1 and board_state.board[col][row + 2] == '-':
-                # If the jump coords match the new specified move coords, then
-                # it is valid
-                if col == new_col and row+2 == new_row:
-                    return True
-                else:
-                    return False
+            # Make sure its not on the second last row of the board otherwise
+            # there would be no more board left after you jumped over the piece
+            if row != board_state.NUM_ROWS-2 and \
+                      board_state.board[col][row + 2] == '-':
+                return col, row+2
+            else:
+                return False
         else:
             # Otherwise the piece is not allowed to move downwards
             return False
 
     @classmethod
-    def __check_left__(cls, board_state, col, row, new_col, new_row):
+    def check_left(cls, board_state, col, row):
         """
         Function checks if the current move is allowed to move left one space
         or can legally jump
@@ -161,26 +166,24 @@ class Move:
         # Ensure that it's not at the very left of the board, and there is at
         # least 1 space to allow it to move left
         if col != 0 and board_state.board[col - 1][row] == '-':
-            if col-1 == new_col and row == new_row:
-                return True
-            else:
-                return False
+            return col-1, row
         # Check that if there is a space and it is occupied by a black or white
         # piece that there is space to allow the current piece to jump
-        elif row != board_state.NUM_ROWS and (
+        elif col != 0 and (
                         board_state.board[col - 1][row] == 'O' or
                         board_state.board[col - 1][row] == '@'):
-            if row != 1 and board_state.board[col - 2][row] == '-':
-                if col-2 == new_col and row == new_row:
-                    return True
-                else:
-                    return False
+            # Make sure its not on the second col of the board otherwise
+            # there would be no more board left after you jumped left
+            if col != 1 and board_state.board[col - 2][row] == '-':
+                return col-2, row
+            else:
+                return False
         else:
             # Otherwise the piece is not allowed to move leftwards
             return False
 
     @classmethod
-    def __check_right__(cls, board_state, col, row, new_col, new_row):
+    def check_right(cls, board_state, col, row):
         """
         Function checks if the current move is allowed to move right one space
         or can legally jump
@@ -189,22 +192,21 @@ class Move:
         """
         # Ensure that it's not at the very right of the board, and there is at
         # least 1 space to allow it to move right
-        if col != board_state.NUM_COLS and \
-                board_state.board[col - 1][row] == '-':
-            if col + 1 == new_col and row == new_row:
-                return True
-            else:
-                return False
+        if col != board_state.NUM_COLS-1 and \
+                board_state.board[col + 1][row] == '-':
+            return col+1, row
         # Check that if there is a space and it is occupied by a black or white
         # piece that there is space to allow the current piece to jump
-        elif row != board_state.NUM_ROWS and (
+        elif col != board_state.NUM_COLS-1 and (
                         board_state.board[col + 1][row] == 'O' or
                         board_state.board[col + 1][row] == '@'):
-            if row != 1 and board_state.board[col + 2][row] == '-':
-                if col + 2 == new_col and row == new_row:
-                    return True
-                else:
-                    return False
+            # Make sure its not on the second last col of the board otherwise
+            # there would be no more board left after you jumped right
+            if col != board_state.NUM_COLS-2 and \
+                      board_state.board[col + 2][row] == '-':
+                return col+2, row
+            else:
+                return False
         else:
             # Otherwise the piece is not allowed to move rightwards
             return False
@@ -216,7 +218,24 @@ def count_pos_moves(board_state, player='W'):
     given the current board_state. This is in the movement phase of the game
     and assumes all regular moves and jumps available including ones which
     may eliminate the player's pieces
-    :param board_state:
-    :param player:
+    :param board_state: A BoardState object containing the current state of
+                        the game.
+    :param player: A character indicating which player's legal moves to count.
+                   Defaults to the White player
     :return: Integer corresponding to the number of moves currently
     """
+    piece_locs = board_state.search_board(player)
+    valid_count = 0
+
+    # For each piece, count the number of valid moves
+    for coord in piece_locs:
+        if Move.check_up(board_state, coord[0], coord[1]):
+            valid_count += 1
+        if Move.check_down(board_state, coord[0], coord[1]):
+            valid_count += 1
+        if Move.check_left(board_state, coord[0], coord[1]):
+            valid_count += 1
+        if Move.check_right(board_state, coord[0], coord[1]):
+            valid_count += 1
+    # Return the count
+    return valid_count

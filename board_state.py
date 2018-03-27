@@ -109,6 +109,6 @@ class BoardState:
         for i in range(self.NUM_COLS):
             for j in range(self.NUM_ROWS):
                 if self.board[j][i] == piece_char:
-                    output.append((i, j))
+                    output.append((j, i))
 
         return output

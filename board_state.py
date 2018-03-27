@@ -88,3 +88,27 @@ class BoardState:
                         return False
             # Otherwise they must be the same state
             return True
+
+    def search_board(self, player='W'):
+        """
+        This function searches the board for the specified player's pieces.
+        :param player: A character indicating which player's pieces to check.
+                       Defaults to 'W' i.e. the white player
+        :return: A list of tuples containing the coords (col, row) of the
+                 player's pieces
+        """
+        output = []
+        if player == 'W':
+            # If white player search for 'O' characters on the board
+            piece_char = 'O'
+        else:
+            # Must be searching for black player's pieces which are '@' chars
+            piece_char = '@'
+
+        # Looping across entire board and then adding to the output
+        for i in range(self.NUM_COLS):
+            for j in range(self.NUM_ROWS):
+                if self.board[j][i] == piece_char:
+                    output.append((i, j))
+
+        return output

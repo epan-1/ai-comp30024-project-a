@@ -208,3 +208,15 @@ class Move:
         else:
             # Otherwise the piece is not allowed to move rightwards
             return False
+
+
+def count_pos_moves(board_state, player='W'):
+    """
+    This function counts the total number of legal moves available for player
+    given the current board_state. This is in the movement phase of the game
+    and assumes all regular moves and jumps available including ones which
+    may eliminate the player's pieces
+    :param board_state:
+    :param player:
+    :return: Integer corresponding to the number of moves currently
+    """

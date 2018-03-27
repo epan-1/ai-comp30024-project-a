@@ -94,7 +94,7 @@ class Node:
 
     def __lt__(self, node):
         # Function taken directly from AIMA class
-        return self.state < node.state
+        return self.board_state < node.state
 
     def child_node(self, problem, move):
         """
@@ -147,10 +147,10 @@ class Node:
     # are equal
 
     def __eq__(self, other):
-        return isinstance(other, Node) and self.state == other.state
+        return isinstance(other, Node) and self.board_state == other.state
 
     def __hash__(self):
-        return hash(self.state)
+        return hash(self.board_state)
 
 
 class Stack:
@@ -159,6 +159,35 @@ class Stack:
     depth first search implementations
     """
     def __init__(self):
-        self.something = []
+        # The basic structure is a Python list as it dynamically resizes itself
+        self.stack = list()
 
+    def push(self, data):
+        """
+        This function adds an element to the stack
+        :param data: Any bit of data to be added. For our problem this would be
+                     a Node object
+        :return: None
+        """
+        # Add the next bit of data to the end of the list
+        self.stack.append(data)
+        return
 
+    def pop(self):
+        """
+        Function to return the last item added into the stack
+        :return: The item that was last added to the stack
+        """
+        # Making sure that the stack is not empty
+        if len(self.stack) > 0:
+            return self.stack.pop()
+        else:
+            print("ERROR: Stack is empty!!")
+            return
+
+    def size(self):
+        """
+        Function to return the number of items currently stored in the stack
+        :return: An integer corresponding to the number of items in the stack
+        """
+        return len(self.stack)

@@ -8,8 +8,9 @@
 ###
 
 # Import all related modules
+from move import *
 from board_state import *
 
 # Read the initial state of the board from stdin
 initial_state = BoardState('I')
-command = input()
+test_move = Move(initial_state, 2, 3, 2, 1)

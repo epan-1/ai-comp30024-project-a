@@ -55,7 +55,8 @@ class MassacreProblem(object):
         if isinstance(board_state, BoardState):
             # Define a reached_goal(board_state) function here to test if the
             # current board_state contains the requirements to be a goal
-            return None
+            if len(board_state.search_board('B')) == 0:
+                return True
         else:
             # It isn't a proper board state so it cannot be a valid goal
             return False

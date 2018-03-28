@@ -208,7 +208,7 @@ def dls(temp_coordinates, depth):
             # Check if node is at goalState
             if problem.goal_test(current_node):
                 # Print moves
-                return
+                return current_node.solution()
             # expand children
             children = current_node.expand()
             # Add all outputs to the Stack

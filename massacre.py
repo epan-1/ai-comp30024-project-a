@@ -204,16 +204,17 @@ def dls(temp_coordinates, depth):
     while search_list.size() != 0:
         # Iterating 'depth' times from root node
         for x in range(depth):
-            # expand function
-            children = node.expand()
+            current_node = search_list.pop()
+            # Check if node is at goalState
+            if problem.goal_test(current_node):
+                # Print moves
+                return
+            # expand children
+            children = current_node.expand()
             # Add all outputs to the Stack
             for child in children:
                 search_list.push(child)
-        # If first item in stack is goalState
-        if problem.goal_test(search_list.pop()):
-            # Print moves
-            return
-        # Else pop item from stack
+    return None
     # Return (depth will increase)
 
 # root (0)
@@ -231,11 +232,10 @@ def iddfs(coordinates):
     # Initiate stored coordinates linked list
     stored_coordinates = []
     while depth < 100:  #Using 100 as arbitrary upper limit for now
-        if dls(coordinates, depth, stored_coordinates):
+        if dls(coordinates, depth):
             return 1  # Print solution here
         else:
             coordinates = init_coordinates
-            stored_coordinates = []
             depth += 1
     print('Failed to find soltution after depth of 100, please refine algorithm')
 

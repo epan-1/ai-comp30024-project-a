@@ -1,3 +1,4 @@
+import massacre
 
 
 def read():
@@ -5,6 +6,7 @@ def read():
     for index in range(9):
         line[index] = input()
     return line
+
 
 def store(line):
     # Create 8x8 matrix
@@ -73,6 +75,14 @@ def check_right(coordinates, i, j):
     else:
         return 0
 
+# For swap dempnstration: DELETE THIS
+
+
+def swap(coordinates, iO, jO, i_, j_):
+    coordinates[iO][jO] = '-'
+    coordinates[i_][j_] = 'O'
+    return
+
 
 def moves(coordinates):
     white_count = 0
@@ -112,6 +122,9 @@ def moves(coordinates):
                     black_count += 1
     print(white_count)
     print(black_count)
+    # swap demonstration DELETE THIS
+    swap(coordinates, 2, 5, 1, 5)
+    printer(coordinates)
     return
 
 
@@ -251,74 +264,6 @@ def find_position_of_whites(coordinates):
     return white_pos
 
 
-# To do
-# It is easy to implement an iterative deepening search
-# IDS: Start with depth = 1
-# for each white piece, move through each possible move, store board structure for each?
-# for each board state, "for each white piece, move through each possible move, store board structure for each?"
-# Could be a queue
-# Tag visited states, delete visited states if a black is killed
-def massacre(coordinates):
-    temp_coordinates = coordinates
-    no_of_blacks = number_of_blacks(coordinates)
-    temp = Node(coordinates)
-    white_positions = find_position_of_whites(coordinates)
-    depth = 0
-    IDDFS(coordinates, white_positions)
-    # I don't if this is right:
-    # Check 1 white piece move
-    # Loop (depth)
-    #   Loop (white pieces)
-    #       Loop (check direction)
-    #           Loop (0 to depth)
-    #               Move it
-    #               Store as temp.setNext
-    #   Depth++
-    #   Delete all stored items
-
-    '''
-    depth = 0
-    IDDFS(coordinates)
-    
-    (Probably store positions of white pieces)
-
-    function DLS(node, depth)
-        if depth = 0 and node is a goal
-            return node
-        if depth > 0
-            foreach child of node
-             found ← DLS(child, depth−1)
-                if found ≠ null
-                 return found
-        return null
-    
-    function IDDFS(root)
-        for depth from 0 to ∞
-            found ← DLS(root, depth)
-            if found ≠ null
-                return found
-    
-    -------      
-    function DLS(temp_coordinates, depth, white_positions)
-        if depth = 0 and node is a goal
-            return node
-        if depth > 0
-            foreach child of node
-             found ← DLS(child, depth−1)
-                if found ≠ null
-                 return found
-        return null
-    
-    function IDDFS(temp_coordinates, white_positions)
-        while(1)
-            if DLS(temp_coordinates, depth, white_positions)
-                return true
-        return false
-    -------
-                
-                
-    '''
-
 
     # if check_killed(coordinates, i, j):
     # kill(coordinates, i, j)
@@ -333,7 +278,7 @@ def selection(coordinates):
     if line[8] == 'Moves':
         moves(coordinates)
     elif line[8] == 'Massacre':
-        massacre(coordinates)
+        massacre.massacre(coordinates)
     else:
         print('Error')
     return

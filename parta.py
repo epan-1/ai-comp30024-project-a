@@ -12,14 +12,22 @@ from move import *
 from board_state import *
 
 # Read the initial state of the board from stdin
-initial_state = BoardState('I')
+initial_state = BoardState()
 command = input()
 
 # If the final 9th line says Moves, count the number of legal moves for
 # both players
 if command == 'Moves':
-    print(count_pos_moves(initial_state, 'W'))
-    print(count_pos_moves(initial_state, 'B'))
+    out = generate_moves(initial_state, 'W')
+    for i in range(len(out)):
+        print(out[i])
+    # print(Move(initial_state, 1,1,1,2))
+    # print(count_pos_moves(initial_state, 'W'))
+    # print(count_pos_moves(initial_state, 'B'))
 
 # test_move = Move(initial_state, 3, 3, 3, 4)
 # print(Move.check_right(initial_state, 3, 3))
+
+if command == 'Massacre':
+    # Something
+    print()  # to cancel error

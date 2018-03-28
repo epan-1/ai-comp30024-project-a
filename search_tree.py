@@ -49,16 +49,10 @@ class MassacreProblem(object):
         output_state = BoardState(board_state)
         # Swap pieces
         output_state.move_piece(move)
-        # Check resulting board for eliminated pieces
+        # Eliminate pieces
+        output_state.check_eliminated()
+        return output_state
 
-
-        # To do:
-        # 0) check move is valid (error handling) X
-        # 1) swap pieces X
-        # 2) check of resulting board state eliminates any pieces (black or white)
-        # 3) eliminate pieces
-        # 4) return output_state
-        raise NotImplementedError
 
     def goal_test(self, board_state):
         """

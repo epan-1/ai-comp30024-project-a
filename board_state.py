@@ -36,9 +36,10 @@ class BoardState:
         else:
             # Takes an board_state object and copies its contents into the board structure
             board = ins_type
-            for i in range(len(board)):
-                for j in range(len(board[i])):
-                    self.board[j][i] = board.output_board(j, i)
+            if isinstance(board, BoardState):
+                for i in range(len(board)):
+                    for j in range(len(board[i])):
+                        self.board[j][i] = board.output_board(j, i)
 
     def __read_input__(self):
         """
@@ -118,7 +119,8 @@ class BoardState:
     def output_board(self, j, i):
         """
         This function outputs the character given the coordinates
-        :param i, j: Coordinates
+        :param j: Coordinates
+        :param i: Coordinates
         :return: A char representing the piece of the board
             at the coordinates
         """
@@ -128,7 +130,7 @@ class BoardState:
         """
         This function acts out the move on the board state
         :param move: move object describing moving a piece
-        :return:
+        :return: None
         """
 
         # Read the characters from move
@@ -138,6 +140,39 @@ class BoardState:
         # Swap these characters
         self.board[move.curr_col][move.curr_row] = new_char
         self.board[move.new_col][move.new_row] = curr_char
+
+        return
+
+    def check_eliminated(self):
+        """
+        This function checks if a board state eliminates any pieces
+        :return: None
+        """
+        # For all white pieces, then black pieces
+        whites = self.search_board('W')
+        blacks = self.search_board()
+
+        while whites is not None:
+            white_coord = whites.pop()
+            j = white_coord[0]
+            i = white_coord[1]
+            if self.board[j + 1][i] == '@' or 'X':
+                if self.board[j - 1][i] == '@' or 'X':
+                    self.board[j][i] = '-'
+            if self.board[j][i + 1] == '@' or 'X':
+                if self.board[j][i - 1] == '@' or 'X':
+                    self.board[j][i] = '-'
+
+        while blacks is not None:
+            blacks_coord = blacks.pop()
+            j = blacks_coord[0]
+            i = blacks_coord[1]
+            if self.board[j + 1][i] == 'O' or 'X':
+                if self.board[j - 1][i] == 'O' or 'X':
+                    self.board[j][i] = '-'
+            if self.board[j][i + 1] == 'O' or 'X':
+                if self.board[j][i - 1] == 'O' or 'X':
+                    self.board[j][i] = '-'
 
         return
 

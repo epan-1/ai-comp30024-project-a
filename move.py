@@ -55,7 +55,7 @@ class Move:
         To string function that prints out what the move is
         :return: None
         """
-        line = "({}, {}) -> ({}, {})\n".format(self.curr_col, self.curr_row,
+        line = "({}, {}) -> ({}, {})".format(self.curr_col, self.curr_row,
                                                self.new_col, self.new_row)
         return line
 

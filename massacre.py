@@ -1,5 +1,8 @@
 # Massacre
 
+from search_tree import *
+from board_state import *
+
 # This is a linked list (for storing board states for DFS
 
 '''
@@ -49,7 +52,7 @@ def check_left_for_white(coordinates, i, j):
 
 
 def check_right_for_white(coordinates, i, j):
-    if j != 0 and coordinates[i][j + 1] == 'O' or 'X':
+    if j != 7 and coordinates[i][j + 1] == 'O' or 'X':
         return 1
 
 
@@ -66,75 +69,6 @@ def check_killed(coordinates, i, j):
 def kill(coordinates, i, j):
     coordinates[i][j] = '-'
     return
-
-
-# This does not store data
-# ------------------------
-
-
-def swap(coordinates, iO, jO, i_, j_):
-    coordinates[iO][jO] = '-'
-    coordinates[i_][j_] = 'O'
-    return
-
-
-def move_up(coordinates, i, j):
-    new = [0 for x in range(2)]
-    if i != 0 and coordinates[i - 1][j] == '-':
-        swap(coordinates, i, j, i - 1, j)
-        new[0] = i - 1
-        new[1] = j
-    elif i != 0 and (coordinates[i - 1][j] == 'O' or coordinates[i - 1][j] == '@'):
-        if i != 1 and coordinates[i - 2][j] == '-':
-            swap(coordinates, i, j, i - 2, j)
-            new[0] = i - 2
-            new[1] = j
-    return new
-
-
-def move_down(coordinates, i, j):
-    new = [0 for x in range(2)]
-    if i != 7 and coordinates[i + 1][j] == '-':
-        swap(coordinates, i, j, i + 1, j)
-        new[0] = i + 1
-        new[1] = j
-    elif i != 7 and (coordinates[i + 1][j] == 'O' or coordinates[i + 1][j] == '@'):
-        if i != 6 and coordinates[i + 2][j] == '-':
-            swap(coordinates, i, j, i + 2, j)
-            new[0] = i + 2
-            new[1] = j
-    return new
-
-
-def move_left(coordinates, i, j):
-    new = [0 for x in range(2)]
-    if j != 0 and coordinates[i][j - 1] == '-':
-        swap(coordinates, i, j, i, j - 1)
-        new[0] = i
-        new[1] = j - 1
-    elif j != 0 and (coordinates[i][j - 1] == 'O' or coordinates[i][j - 1] == '@'):
-        if j != 1 and coordinates[i][j - 2] == '-':
-            swap(coordinates, i, j, i, j - 2)
-            new[0] = i
-            new[1] = j - 2
-    return new
-
-
-def move_right(coordinates, i, j):
-    new = [0 for x in range(2)]
-    if j != 7 and coordinates[i][j + 1] == '-':
-        swap(coordinates, i, j, i, j + 1)
-        new[0] = i
-        new[1] = j
-    elif j != 7 and (coordinates[i][j + 1] == 'O' or coordinates[i][j + 1] == '@'):
-        if j != 6 and coordinates[i][j + 2] == '-':
-            swap(coordinates, i, j, i, j + 2)
-            new[0] = i
-            new[1] = j
-    return new
-
-
-# ------------------------
 
 
 def number_of_blacks(coordinates):
@@ -157,8 +91,8 @@ def number_of_whites(coordinates):
 # Whites and blacks are going to decrease
 
 
-def find_position_of_whites(coordinates):
-    white_pos = [[0 for x in range(12)] for y in range(2)]
+def get_white_positions(coordinates):
+    white_pos = [[0 for x in range(number_of_whites(coordinates))] for y in range(2)]
     white_number = 0
     for i in range(0, 8):
         for j in range(0, 8):
@@ -169,12 +103,12 @@ def find_position_of_whites(coordinates):
     return white_pos
 
 
-def find_position_of_blacks(coordinates):
-    black_pos = [[0 for x in range(12)] for y in range(2)]
+def get_black_positions(coordinates):
+    black_pos = [[0 for x in range(number_of_blacks(coordinates))] for y in range(2)]
     black_number = 0
     for i in range(0, 8):
         for j in range(0, 8):
-            if coordinates[i][j] == 'O':
+            if coordinates[i][j] == '@':
                 black_pos[black_number][0] = i
                 black_pos[black_number][1] = j
                 black_number += 1
@@ -211,8 +145,8 @@ def distance_to_black(coordinates, i, j, all_blacks):
 
 
 def find_most_relevant_white(coordinates):
-    whites = find_position_of_whites(coordinates)
-    blacks = find_position_of_blacks(coordinates)
+    whites = get_white_positions(coordinates)
+    blacks = get_black_positions(coordinates)
     lowest_distance = 100
     for x in range(number_of_whites(coordinates)):
         # Do not move pieces that are adjacent to a black piece
@@ -223,85 +157,64 @@ def find_most_relevant_white(coordinates):
     return lowest_distance_white
 
 
-'''
-function DLS(temp_coordinates, depth, white_positions)
-        if depth = 0 and node is a goal
-            return node
-        if depth > 0
-            foreach child of node
-             found ← DLS(child, depth−1)
-                if found ≠ null
-                 return found
-        return null
-
-    def IDDFS(temp_coordinates, white_positions)
-        while(1)
-            if DLS(temp_coordinates, depth, white_positions)
-                return true
-        return false
-'''
-'''
-def DLS(temp_coordinates, depth, white_positions):
-    if depth = 0 and node is a goal:
-        return node
-    if depth > 0:
-        foreach child of node
-            found ← DLS(child, depth−1)
-                if found ≠ null
-                    return found
-    return None
-'''
-
-# Can add check history here
-# Iterate over all stored coordinates, check if current temp_coordinates == storedcoordinates[x]
-def check_closer(temp_coordinates, i, j, blacks):
+def check_closer_up(temp_coordinates, i, j, blacks):
     current_coordinates = temp_coordinates
     checker = distance_to_black(temp_coordinates, i, j, blacks)
     new_coords = move_up(temp_coordinates, i, j)
     if distance_to_black(temp_coordinates, new_coords[0], new_coords[1], blacks) < checker:
         return temp_coordinates
-    temp_coordinates = current_coordinates
+    else:
+        return current_coordinates
+
+def check_closer_down(temp_coordinates, i, j, blacks):
+    current_coordinates = temp_coordinates
+    checker = distance_to_black(temp_coordinates, i, j, blacks)
     new_coords = move_down(temp_coordinates, i, j)
     if distance_to_black(temp_coordinates, new_coords[0], new_coords[1], blacks) < checker:
         return temp_coordinates
-    temp_coordinates = current_coordinates
+    else:
+        return current_coordinates
+
+def check_closer_left(temp_coordinates, i, j, blacks):
+    current_coordinates = temp_coordinates
+    checker = distance_to_black(temp_coordinates, i, j, blacks)
     new_coords = move_left(temp_coordinates, i, j)
     if distance_to_black(temp_coordinates, new_coords[0], new_coords[1], blacks) < checker:
         return temp_coordinates
-    temp_coordinates = current_coordinates
+    else:
+        return current_coordinates
+
+
+def check_closer_right(temp_coordinates, i, j, blacks):
+    current_coordinates = temp_coordinates
+    checker = distance_to_black(temp_coordinates, i, j, blacks)
     new_coords = move_right(temp_coordinates, i, j)
     if distance_to_black(temp_coordinates, new_coords[0], new_coords[1], blacks) < checker:
         return temp_coordinates
-
-# Depth limited search
-
-
-def dls(temp_coordinates, depth, white_positions):
-    node_coordinates = temp_coordinates
-    current_mrw = find_most_relevant_white(temp_coordinates)
-    blacks = find_position_of_blacks(temp_coordinates)
-    # Initialise stored coordinates as 0
-    # Start with stack of all possible current moves
-    # Check if moves decrease distance to blacks
-
-    for d in range(depth):
-        # Check each direction, if movement decreases distance from a black, move it
-        # Remember to store the temp coordinates
-        temp_coordinates = check_closer(temp_coordinates, current_mrw[0], current_mrw[1], blacks)
-        # Store temp_coordinates as visited
-        # Add all possible movements to stack
+    else:
+        return current_coordinates
 
 
-    # for x in range(number_of_blacks(temp_coordinates)):
-
-# Let's try recursive
-
-
-def dlf_rec(temp_coordinates, depth, white_positions):
-    if number_of_blacks(temp_coordinates) == 0:
-        return  # Something
-    if depth > 0:
-        return  # I'm done till here
+def dls(temp_coordinates, depth):
+    search_list = Stack()
+    node = Node(temp_coordinates)
+    search_list.push(node)
+    problem = MassacreProblem(temp_coordinates)
+    # While Stack is not empty
+    while search_list.size() != 0:
+        # Iterating 'depth' times from root node
+        for x in range(depth):
+            # expand function
+            children = node.expand()
+            # Add all outputs to the Stack
+            for child in children:
+                search_list.push(child)
+        # If first item in stack is goalState
+        if problem.goal_test(search_list.pop()):
+            # Print moves
+            return
+        # Else pop item from stack
+    # Return (depth will increase)
 
 # root (0)
 # While stack is not empty
@@ -312,40 +225,23 @@ def dlf_rec(temp_coordinates, depth, white_positions):
     # How?
 
 
-def iddfs(coordinates, white_positions):
+def iddfs(coordinates):
+    init_coordinates = coordinates
     depth = 1
-    while 1:
-        if dls(coordinates, depth, white_positions):
+    # Initiate stored coordinates linked list
+    stored_coordinates = []
+    while depth < 100:  #Using 100 as arbitrary upper limit for now
+        if dls(coordinates, depth, stored_coordinates):
             return 1  # Print solution here
         else:
+            coordinates = init_coordinates
+            stored_coordinates = []
             depth += 1
+    print('Failed to find soltution after depth of 100, please refine algorithm')
 
 
-# To do
-# It is easy to implement an iterative deepening search
-# IDS: Start with depth = 1
-# for each white piece, move through each possible move, store board structure for each?
-# for each board state, "for each white piece, move through each possible move, store board structure for each?"
-# Could be a queue
-# Tag visited states, delete visited states if a black is killed
 def massacre(coordinates):
-    initial_state = coordinates
-    temp_coordinates = coordinates
-    no_of_blacks = number_of_blacks(coordinates)
-    temp = Node(coordinates)
-    white_positions = find_position_of_whites(coordinates)
-    iddfs(coordinates, white_positions)
-    # I don't if this is right:
-    # Check 1 white piece move
-    # Loop (depth)
-    #   Loop (white pieces)
-    #       Loop (check direction)
-    #           Loop (0 to depth)
-    #               Move it
-    #               Store as temp.setNext
-    #   Depth++
-    #   Delete all stored items
-
+    iddfs(coordinates)
     '''
     depth = 0
     IDDFS(coordinates)
@@ -367,32 +263,4 @@ def massacre(coordinates):
             found ← DLS(root, depth)
             if found ≠ null
                 return found
-
-    -------      
-    function DLS(temp_coordinates, depth, white_positions)
-        if depth = 0 and node is a goal
-            return node
-        if depth > 0
-            foreach child of node
-             found ← DLS(child, depth−1)
-                if found ≠ null
-                 return found
-        return null
-
-    function IDDFS(temp_coordinates, white_positions)
-        while(1)
-            if DLS(temp_coordinates, depth, white_positions)
-                return true
-        return false
-    -------
-
-
-    '''
-
-    # if check_killed(coordinates, i, j):
-    # kill(coordinates, i, j)
-    # no_of_blacks -= 1
-    # if (no_of_blacks == 0): break
-    # Loop something
-    # For each move, check adjacent blacks, check_killed
-    return
+'''

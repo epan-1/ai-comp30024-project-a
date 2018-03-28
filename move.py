@@ -72,32 +72,25 @@ class Move:
             return False
         else:
             # Check if the new coords are valid
+            validity = False
             out = cls.check_up(board_state, col, row)
             if out:
                 if out[0] == new_col and out[1] == new_row:
-                    return True
-                else:
-                    return False
+                    validity = True
             out = cls.check_down(board_state, col, row)
             if out:
                 if out[0] == new_col and out[1] == new_row:
-                    return True
-                else:
-                    return False
+                    validity = True
             out = cls.check_left(board_state, col, row)
             if out:
                 if out[0] == new_col and out[1] == new_row:
-                    return True
-                else:
-                    return False
+                    validity = True
             out = cls.check_right(board_state, col, row)
             if out:
                 if out[0] == new_col and out[1] == new_row:
-                    return True
-                else:
-                    return False
-            # Otherwise return False
-            return False
+                    validity = True
+            # Now return the answer
+        return validity
 
     @classmethod
     def check_up(cls, board_state, col, row):
@@ -210,6 +203,43 @@ class Move:
         else:
             # Otherwise the piece is not allowed to move rightwards
             return False
+
+
+def generate_moves(board_state, player='W'):
+    """
+    This function generates a list of all possible Moves that the player
+    can make given the current board state
+    :param board_state: 
+    :param player: A character to identify which player to create moves for.
+                   Defaults to the white player
+    :return: A list of Move objects representing all valid, possible moves
+    """
+    poss_moves = []
+    piece_locs = board_state.search_board(player)
+    # For each piece, create the valid moves.
+    for coord in piece_locs:
+        # Checking possible up movement
+        new_loc = Move.check_up(board_state, coord[0], coord[1])
+        if new_loc:
+            poss_moves.append(Move(board_state, coord[0], coord[1],
+                                   new_loc[0], new_loc[1]))
+        # Checking possible down movement
+        new_loc = Move.check_down(board_state, coord[0], coord[1])
+        if new_loc:
+            poss_moves.append(Move(board_state, coord[0], coord[1],
+                                   new_loc[0], new_loc[1]))
+        # Checking possible left movement
+        new_loc = Move.check_left(board_state, coord[0], coord[1])
+        if new_loc:
+            poss_moves.append(Move(board_state, coord[0], coord[1],
+                                   new_loc[0], new_loc[1]))
+        # Checking possible right movement
+        new_loc = Move.check_right(board_state, coord[0], coord[1])
+        if new_loc:
+            poss_moves.append(Move(board_state, coord[0], coord[1],
+                                   new_loc[0], new_loc[1]))
+
+    return poss_moves
 
 
 def count_pos_moves(board_state, player='W'):

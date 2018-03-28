@@ -220,7 +220,7 @@ class BoardState:
         while len(whites) != 0:
             white_coord = whites.pop()
             col = white_coord[0]
-            row  = white_coord[1]
+            row = white_coord[1]
 
             # Remove whites pieces that can be eliminated
             self.__check_horiz_elim__('@', col, row)

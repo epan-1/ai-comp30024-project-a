@@ -45,6 +45,19 @@ class MassacreProblem(object):
         :return: A new BoardState object containing the state that results from
                  the performed move
         """
+        # Create an instance of a copy of the current board state
+        output_state = BoardState(board_state)
+        # Swap pieces
+        output_state.move_piece(move)
+        # Check resulting board for eliminated pieces
+
+
+        # To do:
+        # 0) check move is valid (error handling) X
+        # 1) swap pieces X
+        # 2) check of resulting board state eliminates any pieces (black or white)
+        # 3) eliminate pieces
+        # 4) return output_state
         raise NotImplementedError
 
     def goal_test(self, board_state):

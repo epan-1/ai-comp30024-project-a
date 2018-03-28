@@ -31,12 +31,14 @@ class BoardState:
                       for i in range(self.NUM_COLS)]
 
         # If ins_type is 'I' then read from input
-        if ins_type == 'I':
+        if ins_type is None:
             self.__read_input__()
         else:
-            # To fill in with function that takes a 2D list and copies it into
-            # the board structure
-            None
+            # Takes an board_state object and copies its contents into the board structure
+            board = ins_type
+            for i in range(len(board)):
+                for j in range(len(board[i])):
+                    self.board[j][i] = board.output_board(j, i)
 
     def __read_input__(self):
         """
@@ -112,3 +114,31 @@ class BoardState:
                     output.append((j, i))
 
         return output
+
+    def output_board(self, j, i):
+        """
+        This function outputs the character given the coordinates
+        :param i, j: Coordinates
+        :return: A char representing the piece of the board
+            at the coordinates
+        """
+        return self.board[j][i]
+
+    def move_piece(self, move):
+        """
+        This function acts out the move on the board state
+        :param move: move object describing moving a piece
+        :return:
+        """
+
+        # Read the characters from move
+        curr_char = self.board[move.curr_col][move.curr_row]
+        new_char = self.board[move.new_col][move.new_row]
+
+        # Swap these characters
+        self.board[move.curr_col][move.curr_row] = new_char
+        self.board[move.new_col][move.new_row] = curr_char
+
+        return
+
+

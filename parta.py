@@ -12,7 +12,7 @@ from move import *
 from board_state import *
 
 # Read the initial state of the board from stdin
-initial_state = BoardState('I')
+initial_state = BoardState()
 command = input()
 
 # If the final 9th line says Moves, count the number of legal moves for
@@ -27,3 +27,7 @@ if command == 'Moves':
 
 # test_move = Move(initial_state, 3, 3, 3, 4)
 # print(Move.check_right(initial_state, 3, 3))
+
+if command == 'Massacre':
+    # Something
+    print()  # to cancel error

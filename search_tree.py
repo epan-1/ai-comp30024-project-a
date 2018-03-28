@@ -46,13 +46,12 @@ class MassacreProblem(object):
                  the performed move
         """
         # Create an instance of a copy of the current board state
-        output_state = BoardState(board_state)
+        output_state = BoardState(other_state=board_state)
         # Swap pieces
         output_state.move_piece(move)
         # Eliminate pieces
-        output_state.check_eliminated()
+        output_state.eliminate_piece()
         return output_state
-
 
     def goal_test(self, board_state):
         """
@@ -105,6 +104,17 @@ class Node:
         # Function taken directly from AIMA class
         return self.board_state < node.state
 
+    def __str__(self):
+        """
+        This function defines how to represent a node as a string
+        :return: A string
+        """
+        line = ''
+        line += self.board_state.__str__()
+        line += self.move.__str__()
+        line += '\n'
+        return line
+
     def child_node(self, problem, move):
         """
         Creates a new child node to connect to this node
@@ -156,7 +166,7 @@ class Node:
     # are equal
 
     def __eq__(self, other):
-        return isinstance(other, Node) and self.board_state == other.state
+        return isinstance(other, Node) and self.board_state == other.board_state
 
     def __hash__(self):
         return hash(self.board_state)

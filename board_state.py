@@ -6,6 +6,14 @@
 ###
 
 
+class NoBoardReadError(Exception):
+    """
+    Basic exception class to create an error whenever a board state is
+    created without being read from input or copying from an existing state
+    """
+    pass
+
+
 class BoardState:
 
     # Class variables to store the current number of rows and cols this
@@ -13,7 +21,7 @@ class BoardState:
     NUM_COLS = 8
     NUM_ROWS = 8
 
-    def __init__(self, ins_type = 'E'):
+    def __init__(self, ins_type = 'E', other_state = None):
         """
         Constructor to initialise and fill in the current board state
         :param ins_type: Character determining which method to use to insert the
@@ -23,6 +31,7 @@ class BoardState:
                          BoardState object and then doing the appropriate
                          movement of the piece. Default insertion is specified
                          by 'E'
+        :param other_state: Another BoardState object to copy the board from
         """
 
         # Coordinate access is of the format self.board[col][row]. Initialise
@@ -31,15 +40,19 @@ class BoardState:
                       for i in range(self.NUM_COLS)]
 
         # If ins_type is 'I' then read from input
-        if ins_type is None:
+        if ins_type == 'I':
             self.__read_input__()
+        elif isinstance(other_state, BoardState):
+            # Takes an board_state object and copies its contents into the
+            # board structure
+            for i in range(len(other_state.board)):
+                for j in range(len(other_state.board[i])):
+                    self.board[j][i] = other_state.output_piece(j, i)
         else:
-            # Takes an board_state object and copies its contents into the board structure
-            board = ins_type
-            if isinstance(board, BoardState):
-                for i in range(len(board)):
-                    for j in range(len(board[i])):
-                        self.board[j][i] = board.output_board(j, i)
+            raise NoBoardReadError('Data is not in correct format. Please'
+                                   ' check the inputs')
+        # Make sure any pieces that should be eliminated are eliminated
+        self.eliminate_piece()
 
     def __read_input__(self):
         """
@@ -116,7 +129,7 @@ class BoardState:
 
         return output
 
-    def output_board(self, j, i):
+    def output_piece(self, j, i):
         """
         This function outputs the character given the coordinates
         :param j: Coordinates
@@ -129,7 +142,7 @@ class BoardState:
     def move_piece(self, move):
         """
         This function acts out the move on the board state
-        :param move: move object describing moving a piece
+        :param move: Move object describing moving a piece
         :return: None
         """
 
@@ -143,37 +156,84 @@ class BoardState:
 
         return
 
-    def check_eliminated(self):
+    def __check_horiz_elim__(self, enemy, col, row):
         """
-        This function checks if a board state eliminates any pieces
+        Function that checks for horizontal eliminations.
+        :param enemy: A character corresponding to the enemy's piece on
+                       the board. i.e. 'O' for white and '@' for black
+        :param col: Column number of piece to check
+        :param row: Row number of piece to check
+        :return: None
+        """
+        # Only check left and right if the piece is not at the very edge
+        # of the board
+        if col != 0 and col != self.NUM_COLS - 1:
+            # Check if both right and left sides are blocked by a corner or
+            # a black piece
+            if self.board[col + 1][row] == enemy and \
+                            self.board[col - 1][row] == enemy:
+                # Then the white piece gets destroyed
+                self.board[col][row] = '-'
+            elif self.board[col + 1][row] == enemy and \
+                    self.board[col - 1][row] == 'X':
+                self.board[col][row] = '-'
+            elif self.board[col + 1][row] == 'X' and \
+                    self.board[col - 1][row] == enemy:
+                self.board[col][row] = '-'
+
+    def __check_vert_elim__(self, enemy, col, row):
+        """
+        Function that checks for vertical eliminations.
+        :param enemy: A character corresponding to the enemy's piece on
+                       the board. i.e. 'O' for white and '@' for black
+        :param col: Column number of piece to check
+        :param row: Row number of piece to check
+        :return: None
+        """
+        # Only check up and down if the piece is not at the very edge
+        # of the board
+        if row != 0 and row != self.NUM_ROWS - 1:
+            # Check if both up and down sides are blocked by a corner or a
+            # black piece
+            if self.board[col][row + 1] == enemy and \
+               self.board[col][row - 1] == enemy:
+                # Then the white piece gets destroyed
+                self.board[col][row] = '-'
+            elif self.board[col][row + 1] == enemy and \
+                    self.board[col][row - 1] == 'X':
+                self.board[col][row] = '-'
+            elif self.board[col][row + 1] == 'X' and \
+                    self.board[col][row - 1] == enemy:
+                self.board[col][row] = '-'
+
+    def eliminate_piece(self):
+        """
+        This function checks if a board state eliminates any pieces and
+        removes eliminated pieces appropriately
         :return: None
         """
         # For all white pieces, then black pieces
         whites = self.search_board('W')
-        blacks = self.search_board()
+        blacks = self.search_board('B')
 
-        while whites is not None:
+        # For white pieces
+        while len(whites) != 0:
             white_coord = whites.pop()
-            j = white_coord[0]
-            i = white_coord[1]
-            if self.board[j + 1][i] == '@' or 'X':
-                if self.board[j - 1][i] == '@' or 'X':
-                    self.board[j][i] = '-'
-            if self.board[j][i + 1] == '@' or 'X':
-                if self.board[j][i - 1] == '@' or 'X':
-                    self.board[j][i] = '-'
+            col = white_coord[0]
+            row  = white_coord[1]
 
-        while blacks is not None:
-            blacks_coord = blacks.pop()
-            j = blacks_coord[0]
-            i = blacks_coord[1]
-            if self.board[j + 1][i] == 'O' or 'X':
-                if self.board[j - 1][i] == 'O' or 'X':
-                    self.board[j][i] = '-'
-            if self.board[j][i + 1] == 'O' or 'X':
-                if self.board[j][i - 1] == 'O' or 'X':
-                    self.board[j][i] = '-'
+            # Remove whites pieces that can be eliminated
+            self.__check_horiz_elim__('@', col, row)
+            self.__check_vert_elim__('@', col, row)
+
+        # For black pieces
+        while len(blacks) != 0:
+            black_coord = blacks.pop()
+            col = black_coord[0]
+            row = black_coord[1]
+
+            # Remove whites pieces that can be eliminated
+            self.__check_horiz_elim__('O', col, row)
+            self.__check_vert_elim__('O', col, row)
 
         return
-
-

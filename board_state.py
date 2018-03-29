@@ -21,7 +21,7 @@ class BoardState:
     NUM_COLS = 8
     NUM_ROWS = 8
 
-    def __init__(self, ins_type = 'E', other_state = None):
+    def __init__(self, ins_type='E', other_state=None):
         """
         Constructor to initialise and fill in the current board state
         :param ins_type: Character determining which method to use to insert the
@@ -104,6 +104,13 @@ class BoardState:
                         return False
             # Otherwise they must be the same state
             return True
+
+    def __hash__(self):
+        """
+        Makes a BoardState object hashable
+        :return: An integer
+        """
+        return hash(str(self))
 
     def search_board(self, player='W'):
         """

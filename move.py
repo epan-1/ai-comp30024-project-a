@@ -273,7 +273,8 @@ def count_pos_moves(board_state, player='W'):
 
 def check_suicide(board_state, col, row):
     """
-    This function checks if a place where the white piece is moving to will cause it do die
+    This function checks if a place where the white piece is moving to will
+    cause it to die
     :param board_state: A BoardState object containing the current state of the game.
     :param col: Destination column
     :param row: Destination row
@@ -338,8 +339,10 @@ def distance_between(j, i, y, x):
 def match_white_and_goal_tile(board_state):
     """
     This function finds the distances between a white and a goal_tile
-    :param board_state: A BoardState object containing the current state of the game
-    :return sd_w_gt: (sorted by) Shortest distance from every white to nearest goal_tile, white, goal_tile
+    :param board_state: A BoardState object containing the current state of the
+                        game
+    :return sd_w_gt: (sorted by) Shortest distance from every white to nearest
+                      goal_tile, white, goal_tile
     """
     goal_tiles = find_goal_tiles(board_state)
     whites = board_state.search_board('W')

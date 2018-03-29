@@ -166,7 +166,22 @@ class Node:
     # are equal
 
     def __eq__(self, other):
-        return isinstance(other, Node) and self.board_state == other.board_state
+        """
+        Function to test if the current node is equal to another one
+        :param other: The other object to check against
+        :return: True if they are the same and False otherwise
+        """
+        if self is other:
+            return True
+        elif type(self) != type(other):
+            return False
+        else:
+            # A node is considered equal if it has the exact same state as
+            # another node
+            if self.board_state == other.board_state:
+                return True
+            else:
+                return False
 
     def __hash__(self):
         return hash(self.board_state)
@@ -179,7 +194,7 @@ class Stack:
     """
     def __init__(self):
         # The basic structure is a Python list as it dynamically resizes itself
-        self.stack = list()
+        self.__stack = list()
         self.history = list()
 
     def push(self, data):
@@ -194,7 +209,7 @@ class Stack:
             return
         # Add the next bit of data to the end of the list
         else:
-            self.stack.append(data)
+            self.__stack.append(data)
             self.history.append(data)
             return
 
@@ -204,8 +219,8 @@ class Stack:
         :return: The item that was last added to the stack
         """
         # Making sure that the stack is not empty
-        if len(self.stack) > 0:
-            return self.stack.pop()
+        if len(self.__stack) > 0:
+            return self.__stack.pop()
         else:
             print("ERROR: Stack is empty!!")
             return
@@ -215,4 +230,12 @@ class Stack:
         Function to return the number of items currently stored in the stack
         :return: An integer corresponding to the number of items in the stack
         """
-        return len(self.stack)
+        return len(self.__stack)
+
+    def exists(self, data):
+        """
+        Function that checks if data already exists in the stack
+        :param data: Any object to check for existence
+        :return: True if it exists and False otherwise
+        """
+        return data in self.__stack

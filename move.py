@@ -278,16 +278,89 @@ def check_suicide(board_state, col, row):
     :param board_state: A BoardState object containing the current state of the game.
     :param col: Destination column
     :param row: Destination row
-    :return:
+    :return: True if the piece will be killed there and False otherwise
     """
-    if board_state.board[col+1][row] == '@' or 'X':
-        if board_state.board[col-1][row] == '@' or 'X':
-            return True
-    if board_state.board[col][row+1] == '@' or 'X':
-        if board_state.board[col][row-1] == '@' or 'X':
-            return True
+
+    if board_state.check_horiz_elim('@', col, row):
+        return True
+    elif board_state.check_vert_elim('@', col, row):
+        return True
     else:
         return False
+
+
+def check_horiz_piece(board_state, col, row):
+    """
+    This function checks if there are any desirable spots surrounding the piece
+    horizontally
+    :param board_state:
+    :param col: The new column to check
+    :param row: The new row to check
+    :return:
+    """
+
+    # Checking horizontal
+    if 0 <= col <= board_state.NUM_COLS-1:
+        # Check the tile
+        if board_state.board[col][row] == '-':
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def check_piece(board_state, goal_tiles, col, row):
+    """
+    This function checks if there are any desirable spots surrounding the piece
+    :param board_state:
+    :param goal_tiles: An existing list to add the goal tile to
+    :param col: The col number of piece to check
+    :param row: The row number of piece to check
+    :return: None
+    """
+
+    # Checking vertical
+    if row-1 >= 0 and row+1 <= board_state.NUM_ROWS-1:
+        # Check the top side of the piece
+        if board_state.board[col][row-1] == 'O' or \
+           board_state.board[col][row-1] == 'X':
+            # If occupied check the other side for a free space
+            if board_state.board[col][row+1] != '@':
+                goal_tiles.append((col, row+1))
+        # Check the bottom side of the piece
+        elif board_state.board[col][row+1] == 'O' or \
+                board_state.board[col][row+1] == 'X':
+            # If occupied check the other side for a free space
+            if board_state.board[col][row-1] != '@':
+                goal_tiles.append((col, row-1))
+        # Check if top is empty and bottom is empty
+        elif board_state.board[col][row-1] == '-' and \
+                board_state.board[col][row+1] == '-':
+            goal_tiles.append((col, row-1))
+            goal_tiles.append((col, row+1))
+
+    # Checking horizontal
+    if col-1 >= 0 and col+1 <= board_state.NUM_COLS-1:
+        # Check left side of the piece
+        if board_state.board[col-1][row] == 'O' or \
+           board_state.board[col-1][row] == 'X':
+            # If occupied check the other side for a free space
+            if board_state.board[col+1][row] != '@':
+                goal_tiles.append((col+1, row))
+        # Check the right side of the piece
+        elif board_state.board[col+1][row] == 'O' or \
+                board_state.board[col+1][row] == 'X':
+            # If occupied check the other side for a free space
+            if board_state.board[col-1][row] != '@':
+                goal_tiles.append((col-1, row))
+        # Check if left is empty and right is empty
+        elif board_state.board[col-1][row] == '-' and \
+                board_state.board[col+1][row] == '-':
+            goal_tiles.append((col-1, row))
+            goal_tiles.append((col+1, row))
+
+    return
 
 
 def find_goal_tiles(board_state):
@@ -298,30 +371,16 @@ def find_goal_tiles(board_state):
     :return goal_tiles: A list of goal coordinates
     """
     goal_tiles = []
-    blacks = board_state.search_board()
-    while blacks is not None:
-        current_black = blacks.pop
-        j = current_black[0]
-        i = current_black[1]
-        count = 0
-        if board_state.board[j+1][i] == 'O' or 'X':
-            goal_tiles.append((j-1, i))
-            count += 1
-        if board_state.board[j-1][i] == 'O' or 'X':
-            goal_tiles.append((j+1, i))
-            count += 1
-        if board_state.board[j][i+1] == 'O' or 'X':
-            goal_tiles.append((j, i-1))
-            count += 1
-        if board_state.board[j][i-1] == 'O' or 'X':
-            goal_tiles.append((j, i+1))
-            count += 1
-        if count == 0:
-            goal_tiles.append((j+1, i))
-            goal_tiles.append((j-1, i))
-            goal_tiles.append((j, i+1))
-            goal_tiles.append((j, i-1))
-    return goal_tiles
+    blacks = board_state.search_board('B')
+    while len(blacks) != 0:
+        current_black = blacks.pop()
+        col = current_black[0]
+        row = current_black[1]
+        # Check the piece
+        check_piece(board_state, goal_tiles, col, row)
+
+    # Convert into a set then back to list to remove duplicates
+    return list(set(goal_tiles))
 
 
 def distance_between(j, i, y, x):
@@ -349,8 +408,8 @@ def match_white_and_goal_tile(board_state):
     sd_w_gt = []
     closest_goal_tile = None
 
-    while whites is not None:
-        current_white = whites.pop
+    while len(whites) != 0:
+        current_white = whites.pop()
         closest_distance = 1000
         for coords in goal_tiles:
             current_distance = distance_between(coords[0], coords[1],
@@ -374,6 +433,7 @@ def sorted_generate_moves(board_state):
         distance = piece[0]
         white_pos = piece[1]
         goal_tile_pos = piece[2]
+
         # Checking possible up movement
         new_loc = Move.check_up(board_state, white_pos[0], white_pos[1])
         # Valid move

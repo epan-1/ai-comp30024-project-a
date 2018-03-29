@@ -45,7 +45,7 @@ class MassacreProblem(object):
         :return: A new BoardState object containing the state that results from
                  the performed move
         """
-        # Create an instance of a copy of the current board state
+        # Create a copy of the current board state
         output_state = BoardState(other_state=board_state)
         # Swap pieces
         output_state.move_piece(move)

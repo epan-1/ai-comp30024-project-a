@@ -163,7 +163,7 @@ class BoardState:
 
         return
 
-    def __check_horiz_elim__(self, enemy, col, row):
+    def check_horiz_elim(self, enemy, col, row):
         """
         Function that checks for horizontal eliminations.
         :param enemy: A character corresponding to the enemy's piece on
@@ -179,23 +179,24 @@ class BoardState:
             # a black piece
             if self.board[col + 1][row] == enemy and \
                             self.board[col - 1][row] == enemy:
-                # Then the white piece gets destroyed
-                self.board[col][row] = '-'
+                # Then the piece gets destroyed
+                return True
             elif self.board[col + 1][row] == enemy and \
                     self.board[col - 1][row] == 'X':
-                self.board[col][row] = '-'
+                return True
             elif self.board[col + 1][row] == 'X' and \
                     self.board[col - 1][row] == enemy:
-                self.board[col][row] = '-'
+                return True
 
-    def __check_vert_elim__(self, enemy, col, row):
+    def check_vert_elim(self, enemy, col, row):
         """
         Function that checks for vertical eliminations.
         :param enemy: A character corresponding to the enemy's piece on
                        the board. i.e. 'O' for white and '@' for black
         :param col: Column number of piece to check
         :param row: Row number of piece to check
-        :return: None
+        :return: Returns true if the piece being checked will be destroyed and
+                 False otherwise
         """
         # Only check up and down if the piece is not at the very edge
         # of the board
@@ -204,14 +205,14 @@ class BoardState:
             # black piece
             if self.board[col][row + 1] == enemy and \
                self.board[col][row - 1] == enemy:
-                # Then the white piece gets destroyed
-                self.board[col][row] = '-'
+                # Then the piece gets destroyed
+                return True
             elif self.board[col][row + 1] == enemy and \
                     self.board[col][row - 1] == 'X':
-                self.board[col][row] = '-'
+                return True
             elif self.board[col][row + 1] == 'X' and \
                     self.board[col][row - 1] == enemy:
-                self.board[col][row] = '-'
+                return True
 
     def eliminate_piece(self):
         """
@@ -223,6 +224,18 @@ class BoardState:
         whites = self.search_board('W')
         blacks = self.search_board('B')
 
+        # For black pieces
+        while len(blacks) != 0:
+            black_coord = blacks.pop()
+            col = black_coord[0]
+            row = black_coord[1]
+
+            # Remove black pieces that can be eliminated
+            if self.check_horiz_elim('O', col, row):
+                self.board[col][row] = '-'
+            elif self.check_vert_elim('O', col, row):
+                self.board[col][row] = '-'
+
         # For white pieces
         while len(whites) != 0:
             white_coord = whites.pop()
@@ -230,17 +243,9 @@ class BoardState:
             row = white_coord[1]
 
             # Remove whites pieces that can be eliminated
-            self.__check_horiz_elim__('@', col, row)
-            self.__check_vert_elim__('@', col, row)
-
-        # For black pieces
-        while len(blacks) != 0:
-            black_coord = blacks.pop()
-            col = black_coord[0]
-            row = black_coord[1]
-
-            # Remove whites pieces that can be eliminated
-            self.__check_horiz_elim__('O', col, row)
-            self.__check_vert_elim__('O', col, row)
+            if self.check_horiz_elim('@', col, row):
+                self.board[col][row] = '-'
+            elif self.check_vert_elim('@', col, row):
+                self.board[col][row] = '-'
 
         return

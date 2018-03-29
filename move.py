@@ -380,7 +380,7 @@ def sorted_generate_moves(board_state):
             # Check suicide
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
+                if 0 < distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
                     poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
         # Checking possible down movement
         new_loc = Move.check_down(board_state, white_pos[0], white_pos[1])
@@ -389,7 +389,7 @@ def sorted_generate_moves(board_state):
             # Check suicide
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
+                if 0 < distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
                     poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
         # Checking possible left movement
         new_loc = Move.check_left(board_state, white_pos[0], white_pos[1])
@@ -398,13 +398,13 @@ def sorted_generate_moves(board_state):
             # Check suicide
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
+                if 0 < distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
                     poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
         # Checking possible right movement
         new_loc = Move.check_right(board_state, white_pos[0], white_pos[1])
         if new_loc:
             if check_suicide(board_state, new_loc[0], new_loc[1]):
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
+                if 0 < distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
                     poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
 
     return poss_moves

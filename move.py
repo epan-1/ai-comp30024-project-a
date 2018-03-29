@@ -344,17 +344,17 @@ def match_white_and_goal_tile(board_state):
     goal_tiles = find_goal_tiles(board_state)
     whites = board_state.search_board('W')
     sd_w_gt = []
+    closest_goal_tile = None
 
     while whites is not None:
         current_white = whites.pop
         closest_distance = 1000
-        while goal_tiles is not None:
-            current_goal_tile = goal_tiles.pop
-            current_distance = distance_between(current_goal_tile[0], current_goal_tile[1],
+        for coords in goal_tiles:
+            current_distance = distance_between(coords[0], coords[1],
                                                 current_white[0], current_white[1])
             if current_distance < closest_distance:
                 closest_distance = current_distance
-                closest_goal_tile = current_goal_tile
+                closest_goal_tile = coords
 
         sd_w_gt.append((closest_distance, current_white, closest_goal_tile))
     return sorted(sd_w_gt)
@@ -367,12 +367,10 @@ def sorted_generate_moves(board_state):
     :return: A list of Move objects representing all valid, possible moves
     """
     poss_moves = []
-    piece_stack = match_white_and_goal_tile(board_state)
-    while piece_stack is not None:
-        move_info = piece_stack.pop
-        distance = move_info[0]
-        white_pos = move_info[1]
-        goal_tile_pos = move_info[2]
+    for piece in match_white_and_goal_tile(board_state):
+        distance = piece[0]
+        white_pos = piece[1]
+        goal_tile_pos = piece[2]
         # Checking possible up movement
         new_loc = Move.check_up(board_state, white_pos[0], white_pos[1])
         # Valid move
@@ -381,7 +379,7 @@ def sorted_generate_moves(board_state):
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
                 if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
+                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
         # Checking possible down movement
         new_loc = Move.check_down(board_state, white_pos[0], white_pos[1])
         # Valid move
@@ -390,7 +388,7 @@ def sorted_generate_moves(board_state):
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
                 if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
+                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
         # Checking possible left movement
         new_loc = Move.check_left(board_state, white_pos[0], white_pos[1])
         # Valid move
@@ -399,17 +397,12 @@ def sorted_generate_moves(board_state):
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
                 if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
+                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
         # Checking possible right movement
         new_loc = Move.check_right(board_state, white_pos[0], white_pos[1])
         if new_loc:
             if check_suicide(board_state, new_loc[0], new_loc[1]):
                 if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1],new_loc[0], new_loc[1]))
+                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
 
     return poss_moves
-
-
-
-
-

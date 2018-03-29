@@ -267,7 +267,7 @@ def count_pos_moves(board_state, player='W'):
             valid_count += 1
         if Move.check_right(board_state, coord[0], coord[1]):
             valid_count += 1
-    # Return the count
+    # Return the count 
     return valid_count
 
 

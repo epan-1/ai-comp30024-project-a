@@ -195,6 +195,26 @@ def check_closer_right(temp_coordinates, i, j, blacks):
         return current_coordinates
 
 
+def dfs(temp_coordinates):
+    search_list = Stack()
+    node = Node(temp_coordinates)
+    search_list.push(node)
+    problem = MassacreProblem(temp_coordinates)
+    # While Stack is not empty
+    while search_list.size() != 0:
+        current_node = search_list.pop()
+        # Check if node is at goalState
+        if problem.goal_test(current_node):
+            # Print moves
+            return current_node.solution()
+        # expand children
+        children = current_node.expand()
+        # Add all outputs to the Stack
+        for child in children:
+            search_list.push(child)
+    return None
+
+
 def dls(temp_coordinates, depth):
     search_list = Stack()
     node = Node(temp_coordinates)

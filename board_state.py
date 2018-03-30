@@ -21,7 +21,7 @@ class BoardState:
     NUM_COLS = 8
     NUM_ROWS = 8
 
-    def __init__(self, ins_type='E', other_state=None, temp=None):
+    def __init__(self, ins_type='E', other_state=None):
         """
         Constructor to initialise and fill in the current board state
         :param ins_type: Character determining which method to use to insert the
@@ -48,8 +48,6 @@ class BoardState:
             for i in range(len(other_state.board)):
                 for j in range(len(other_state.board[i])):
                     self.board[j][i] = other_state.output_piece(j, i)
-        elif temp:
-            self.board = temp
         else:
             raise NoBoardReadError('Data is not in correct format. Please'
                                    ' check the inputs')

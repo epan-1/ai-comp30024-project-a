@@ -27,18 +27,8 @@ if command == 'Massacre':
     # Create a massacre problem
     problem = MassacreProblem(initial_state)
     parent = Node(problem.initial_board)
-    visited = set()
-    # result = breadth_first(problem)
-    # result = depth_first(problem)
-    # result = rec_depth_first(problem, visited)
-    # result = depth_limited_search(problem, 4)
-    # result = rec_depth_limited(problem, 5)
     result = iterative_deepening_search(problem)
     print(result)
-    # size = stack.size()
-    # for x in range(size):
-    #     print(stack.pop())
-    print(len(result.solution()))
     # for move in result.solution():
-        # print(move)
-
+    #     print(move)
+    print(len(result.solution()))

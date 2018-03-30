@@ -35,6 +35,7 @@ Contains the algorithms that we want to try for search
 - Iterative deepening search
 - Depth limited search
 - Depth first search (for testing)
+- Breadth first search (for testing)
 
 'Moves':
 Time complexity: O(board_width^2) + O(white_pieces) + O(black_pieces)
@@ -64,7 +65,17 @@ Path taken to eliminate all black pieces
 Current Massacre Strategy:
 - Iteratively deepening search algorithm
 - Before moving, checks if new board state will be a unique board state
-- If so, adds to the board state history 
+- If so, add this state to the tree
+- For each white piece on the board
+    - Find a goal tile where a goal tile is any tile next to a black, especially a tile that kills the black piece
+- Generate the possible moves to kill the first black piece in this state
+    - Possible moves will not:
+        - Move to a place that can cause it to be eliminated
+    - Possible moves will:
+        - Minimise the distance between a white piece and a goal tile
+- Children are generated in a way that sorts them by shortest minimum distance to goal tile
+- Execute all of the possible moves and add them to the search tree
+
 
 Complexity:
 
@@ -74,9 +85,6 @@ Space complexity: Depth of shallowest solution
 
 Branching factor = number of white pieces * 4 (i.e. The max number of legal moves possible) 
                  = O(4n) where n is number of black pieces on the board
-
-Max. search depth
-
 
 Optimal?:
 Our algorithm is not optimal as it does not explore all branches to check for optimality. It

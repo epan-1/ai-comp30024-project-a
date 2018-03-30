@@ -32,8 +32,11 @@ class MassacreProblem(object):
                             of the board
         :return A list of Move objects that are possible/legal
         """
-        # pos_moves = generate_moves(board_state)
-        pos_moves = sorted_generate_moves(board_state)
+        # pos_moves = generate_moves(board_state) # Naive moves function here
+        blacks = board_state.search_board('B')
+        # Generate the possible moves required to kill the first black piece
+        # on the board
+        pos_moves = sorted_generate_moves_piece(board_state, blacks[0])
         return pos_moves
 
     def result(self, board_state, move):
@@ -74,6 +77,7 @@ class MassacreProblem(object):
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
+        # THIS WAS TAKEN DIRECTLY FROM THE AIMA code provided by the textbook
         current_cost = c
 
         return current_cost + 1

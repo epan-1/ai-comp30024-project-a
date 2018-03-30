@@ -28,7 +28,5 @@ if command == 'Massacre':
     problem = MassacreProblem(initial_state)
     parent = Node(problem.initial_board)
     result = iterative_deepening_search(problem)
-    print(result)
-    # for move in result.solution():
-    #     print(move)
-    print(len(result.solution()))
+    for move in result.solution():
+        print(move)

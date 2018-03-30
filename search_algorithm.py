@@ -68,7 +68,7 @@ def depth_limited_search(problem, limit=1):
     explored = set()
     while frontier.size() != 0:
         node = frontier.pop()
-        print(node)  # For visualisation only
+        # print(node)  # For visualisation only
         if problem.goal_test(node.board_state):
             return node
         elif node.depth == limit:

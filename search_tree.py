@@ -32,7 +32,8 @@ class MassacreProblem(object):
                             of the board
         :return A list of Move objects that are possible/legal
         """
-        pos_moves = generate_moves(board_state)
+        # pos_moves = generate_moves(board_state)
+        pos_moves = sorted_generate_moves(board_state)
         return pos_moves
 
     def result(self, board_state, move):
@@ -67,13 +68,15 @@ class MassacreProblem(object):
             # It isn't a proper board state so it cannot be a valid goal
             return False
 
-    def path_cost(self, c, state1, action, state2):
+    def path_cost(self, c, state1, move, state2):
         """Return the cost of a solution path that arrives at state2 from
         state1 via action, assuming cost c to get up to state1. If the problem
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
-        return c + 1
+        current_cost = c
+
+        return current_cost + 1
 
 
 class Node:
@@ -102,7 +105,7 @@ class Node:
 
     def __lt__(self, node):
         # Function taken directly from AIMA class
-        return self.board_state < node.state
+        return self.board_state < node.board_state
 
     def __str__(self):
         """
@@ -192,10 +195,21 @@ class Stack:
     Class that implements a queue using LIFO ordering. To be used for all
     depth first search implementations
     """
-    def __init__(self):
+    def __init__(self, data=None):
         # The basic structure is a Python list as it dynamically resizes itself
+        # Also adds in a single data item if given
         self.__stack = list()
-        self.history = list()
+        if data:
+            self.__stack.append(data)
+
+    def extend(self, data_list):
+        """
+        This function iteratively adds all the elements in a list to the end
+        of the stack
+        :param data_list: A list of data to add to the stack
+        :return: None
+        """
+        self.__stack.extend(data_list)
 
     def push(self, data):
         """
@@ -204,14 +218,7 @@ class Stack:
                      a Node object
         :return: None
         """
-        # Check if data has been added already
-        if data in self.history:
-            return
-        # Add the next bit of data to the end of the list
-        else:
-            self.__stack.append(data)
-            self.history.append(data)
-            return
+        self.__stack.append(data)
 
     def pop(self):
         """

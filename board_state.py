@@ -21,7 +21,7 @@ class BoardState:
     NUM_COLS = 8
     NUM_ROWS = 8
 
-    def __init__(self, ins_type='E', other_state=None):
+    def __init__(self, ins_type='E', other_state=None, temp=None):
         """
         Constructor to initialise and fill in the current board state
         :param ins_type: Character determining which method to use to insert the
@@ -48,6 +48,8 @@ class BoardState:
             for i in range(len(other_state.board)):
                 for j in range(len(other_state.board[i])):
                     self.board[j][i] = other_state.output_piece(j, i)
+        elif temp:
+            self.board = temp
         else:
             raise NoBoardReadError('Data is not in correct format. Please'
                                    ' check the inputs')
@@ -85,6 +87,22 @@ class BoardState:
             # Add newline character to end the current line and start the next
             line += '\n'
         return line
+
+    def __lt__(self, other):
+        """
+        Function to return if a board state is less than another one. It is
+        considered less than if there are less black pieces than white pieces
+        self < other
+        :param other:
+        :return:
+        """
+        if isinstance(other, BoardState):
+            num_whites = len(self.search_board('W'))
+            num_blacks = len(self.search_board('B'))
+            return num_blacks < num_whites
+
+        else:
+            return False
 
     def __eq__(self, other):
         """

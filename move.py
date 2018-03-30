@@ -50,13 +50,16 @@ class Move:
                 # Otherwise they must be a different move
                 return False
 
+    def __hash__(self):
+        return hash((self.curr_col, self.curr_row, self.new_col, self.new_row))
+
     def __str__(self):
         """
         To string function that prints out what the move is
         :return: None
         """
         line = "({}, {}) -> ({}, {})".format(self.curr_col, self.curr_row,
-                                               self.new_col, self.new_row)
+                                             self.new_col, self.new_row)
         return line
 
     @classmethod
@@ -97,7 +100,9 @@ class Move:
         """
         Function checks if the current move is allowed to move up one space
         or can legally jump
-        :param board_state:
+        :param board_state: Current state of the board
+        :param col: Column number of the position of the current piece
+        :param row: Row number of the position of the current piece
         :return:
         """
         # Ensure that it's not at the very top of the board, and there is at
@@ -124,7 +129,9 @@ class Move:
         """
         Function checks if the current move is allowed to move down one space
         or can legally jump
-        :param board_state:
+        :param board_state: Current state of the board
+        :param col: Column number of the position of the current piece
+        :param row: Row number of the position of the current piece
         :return:
         """
         # Ensure that it's not at the very bottom of the board, and there is at
@@ -153,7 +160,9 @@ class Move:
         """
         Function checks if the current move is allowed to move left one space
         or can legally jump
-        :param board_state:
+        :param board_state: Current state of the board
+        :param col: Column number of the position of the current piece
+        :param row: Row number of the position of the current piece
         :return:
         """
         # Ensure that it's not at the very left of the board, and there is at
@@ -180,7 +189,9 @@ class Move:
         """
         Function checks if the current move is allowed to move right one space
         or can legally jump
-        :param board_state:
+        :param board_state: Current state of the board
+        :param col: Column number of the position of the current piece
+        :param row: Row number of the position of the current piece
         :return:
         """
         # Ensure that it's not at the very right of the board, and there is at
@@ -271,11 +282,12 @@ def count_pos_moves(board_state, player='W'):
     return valid_count
 
 
-def check_suicide(board_state, col, row):
+def is_suicide(board_state, col, row):
     """
     This function checks if a place where the white piece is moving to will
     cause it to die
-    :param board_state: A BoardState object containing the current state of the game.
+    :param board_state: A BoardState object containing the current state of the
+                        game.
     :param col: Destination column
     :param row: Destination row
     :return: True if the piece will be killed there and False otherwise
@@ -285,27 +297,6 @@ def check_suicide(board_state, col, row):
         return True
     elif board_state.check_vert_elim('@', col, row):
         return True
-    else:
-        return False
-
-
-def check_horiz_piece(board_state, col, row):
-    """
-    This function checks if there are any desirable spots surrounding the piece
-    horizontally
-    :param board_state:
-    :param col: The new column to check
-    :param row: The new row to check
-    :return:
-    """
-
-    # Checking horizontal
-    if 0 <= col <= board_state.NUM_COLS-1:
-        # Check the tile
-        if board_state.board[col][row] == '-':
-            return True
-        else:
-            return False
     else:
         return False
 
@@ -365,9 +356,10 @@ def check_piece(board_state, goal_tiles, col, row):
 
 def find_goal_tiles(board_state):
     """
-    This function finds where the presence of a white piece would eliminate a black
-    or be on the side of a black
-    :param board_state: A BoardState object containing the current state of the game
+    This function finds where the presence of a white piece would eliminate a
+    black or be on the side of a black
+    :param board_state: A BoardState object containing the current state of the
+                        game
     :return goal_tiles: A list of goal coordinates
     """
     goal_tiles = []
@@ -424,12 +416,16 @@ def match_white_and_goal_tile(board_state):
 
 def sorted_generate_moves(board_state):
     """
-    This function generates all legal, non-suicidal moves in order of distance from blacks
-    :param board_state: A BoardState object containing the current state of the game
+    This function generates all legal, non-suicidal moves in order of distance
+    from blacks
+    :param board_state: A BoardState object containing the current state of the
+                        game
+    :param : A BoardState object holding the initial board config
     :return: A list of Move objects representing all valid, possible moves
     """
     poss_moves = []
-    for piece in match_white_and_goal_tile(board_state):
+    pieces = match_white_and_goal_tile(board_state)
+    for piece in pieces:
         distance = piece[0]
         white_pos = piece[1]
         goal_tile_pos = piece[2]
@@ -439,33 +435,52 @@ def sorted_generate_moves(board_state):
         # Valid move
         if new_loc:
             # Check suicide
-            if check_suicide(board_state, new_loc[0], new_loc[1]):
+            if not is_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
+                new_dist = distance_between(new_loc[0], new_loc[1],
+                                            goal_tile_pos[0], goal_tile_pos[1])
+                if new_dist < distance:
+                    move = Move(board_state, white_pos[0], white_pos[1],
+                                new_loc[0], new_loc[1])
+                    poss_moves.append(move)
+
         # Checking possible down movement
         new_loc = Move.check_down(board_state, white_pos[0], white_pos[1])
         # Valid move
         if new_loc:
             # Check suicide
-            if check_suicide(board_state, new_loc[0], new_loc[1]):
+            if not is_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
+                new_dist = distance_between(new_loc[0], new_loc[1],
+                                            goal_tile_pos[0], goal_tile_pos[1])
+                if new_dist < distance:
+                    move = Move(board_state, white_pos[0], white_pos[1],
+                                new_loc[0], new_loc[1])
+                    poss_moves.append(move)
+
         # Checking possible left movement
         new_loc = Move.check_left(board_state, white_pos[0], white_pos[1])
         # Valid move
         if new_loc:
             # Check suicide
-            if check_suicide(board_state, new_loc[0], new_loc[1]):
+            if not is_suicide(board_state, new_loc[0], new_loc[1]):
                 # Does it decrease distance to the closest goal_tile?
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
+                new_dist = distance_between(new_loc[0], new_loc[1],
+                                            goal_tile_pos[0], goal_tile_pos[1])
+                if new_dist < distance:
+                    move = Move(board_state, white_pos[0], white_pos[1],
+                                new_loc[0], new_loc[1])
+                    poss_moves.append(move)
+
         # Checking possible right movement
         new_loc = Move.check_right(board_state, white_pos[0], white_pos[1])
         if new_loc:
-            if check_suicide(board_state, new_loc[0], new_loc[1]):
-                if distance_between(new_loc[0], new_loc[1], goal_tile_pos[0], goal_tile_pos[1]) < distance:
-                    poss_moves.append(Move(board_state, white_pos[0], white_pos[1], new_loc[0], new_loc[1]))
+            if not is_suicide(board_state, new_loc[0], new_loc[1]):
+                new_dist = distance_between(new_loc[0], new_loc[1],
+                                            goal_tile_pos[0], goal_tile_pos[1])
+                if new_dist < distance:
+                    move = Move(board_state, white_pos[0], white_pos[1],
+                                new_loc[0], new_loc[1])
+                    poss_moves.append(move)
 
     return poss_moves

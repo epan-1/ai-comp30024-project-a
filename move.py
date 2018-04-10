@@ -13,25 +13,66 @@ class Move:
     """
     This class represents a valid move in the game "Watch your Back!"
     """
-    def __init__(self, board_state, col, row, new_col=None, new_row=None):
+    def __init__(self, board_state, action=None, col=None, row=None, new_col=None,
+                 new_row=None, enemy=None):
         """
         A move object contains the coordinates of the piece to be moved as well
         as the coordinates of the new location that the piece will be moved to
-        :param col: The column number this move refers to.
-        :param row: The row number this move refers to.
+        :param board_state:
+        :param action:
+        :param col: The column number this move refers to. Defaults to None
+        :param row: The row number this move refers to. Defaults to None
         :param new_col: The new column number this move will place the piece to.
                         Defaults to None when the move is a placing move.
         :param new_row: The new row number this move will place the piece to.
                         Defaults to None when this move is a placing move.
+        :param enemy: A character that represents an enemy piece on the board.
+                      Defaults to None if no character is specified.
         """
+
+        # Assign the values read from action
+        coords = self.__convert_action__(action)
+        self.curr_col = coords[0][0]
+        self.curr_row = coords[0][1]
+        self.new_col = coords[1][0]
+        self.new_row = coords[1][1]
+
         # Check if the move is valid before creating the object
-        if self.__is_valid__(board_state, col, row, new_col, new_row):
-            self.curr_col = col
-            self.curr_row = row
-            self.new_col = new_col
-            self.new_row = new_row
+        # if self.__is_valid__(board_state, col, row, new_col, new_row):
+        #     self.curr_col = col
+        #     self.curr_row = row
+        #     self.new_col = new_col
+        #     self.new_row = new_row
+        # else:
+        #     raise InvalidMoveError("Invalid Move detected...")
+
+    @classmethod
+    def __convert_action__(cls, action):
+        """
+        This method converts the action into an appropriate placement or
+        movement type move.
+        :param action: The following are valid representations of an action
+                        - A single tuple (x,y) representing a placement move
+                        - A tuple of tuples ((a,b), (c,d) representing a
+                            movement move
+                        - The value None for forfeited turns where no move
+                            can be done
+        :return: A tuple of tuples with the format ((col, row), (new_col, new_row))
+        """
+        # Check if it's a forfeited move
+        if action is None:
+            return (None, None), (None, None)
         else:
-            raise InvalidMoveError("Invalid Move detected...")
+            # Unpack the action to check whether it contains tuples or ints
+            val1, val2 = action
+            if isinstance(val1, tuple) and isinstance(val2, tuple):
+                # This is movement move
+                return val1, val2
+            elif isinstance(val1, int) and isinstance(val2, int):
+                # This is a placement move
+                return (val1, val2), (None, None)
+
+            return None
 
     def __eq__(self, other):
         """
@@ -65,6 +106,27 @@ class Move:
         line = "({}, {}) -> ({}, {})".format(self.curr_col, self.curr_row,
                                              self.new_col, self.new_row)
         return line
+
+    @classmethod
+    def __is_place__(cls, col, row, new_col, new_row, enemy):
+        """
+        This method checks if the current move is a placing one or not. If it is
+        a placing move then it checks if it is a valid placement.
+        :param col: Column number to check
+        :param row: Row number to check
+        :param new_col: New column number to check to see if it is None.
+        :param new_row: New row number to check to see if it is None.
+        :param enemy: Character representing the enemy pieces. Also checks to
+                      see if None was placed.
+        :return: True if the move is a valid placement move. Otherwise returns
+                 False.
+        """
+        # If any of these 3 values are not specified return False.
+        if new_col or new_row or enemy:
+            return False
+        # Now proceed to check if the coordinates specified are valid
+
+        return None
 
     @classmethod
     def __is_valid__(cls, board_state, col, row, new_col, new_row):

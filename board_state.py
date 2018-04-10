@@ -21,16 +21,17 @@ class BoardState:
     NUM_COLS = 8
     NUM_ROWS = 8
 
-    def __init__(self, ins_type='E', other_state=None):
+    def __init__(self, ins_type='N', other_state=None):
         """
         Constructor to initialise and fill in the current board state
         :param ins_type: Character determining which method to use to insert the
                          position of pieces into the board structure. If the
-                         character is 'I' then insert from stdin otherwise
+                         character is 'I' then insert from stdin or
                          insertion is done by reading from an existing
                          BoardState object and then doing the appropriate
-                         movement of the piece. Default insertion is specified
-                         by 'E'
+                         movement of the piece. Otherwise create an empty
+                         board representation to fill with more data specified
+                         by 'N'. Default insertion is specified by 'N'
         :param other_state: Another BoardState object to copy the board from
         """
 
@@ -39,8 +40,11 @@ class BoardState:
         self.board = [['-' for j in range(self.NUM_ROWS)]
                       for i in range(self.NUM_COLS)]
 
+        # If ins_type is 'N' then do nothing and just assign the empty board
+        if ins_type == 'N':
+            pass
         # If ins_type is 'I' then read from input
-        if ins_type == 'I':
+        elif ins_type == 'I':
             self.__read_input__()
         elif isinstance(other_state, BoardState):
             # Takes an board_state object and copies its contents into the

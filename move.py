@@ -37,12 +37,18 @@ class Move:
             self.curr_row = coords[0][1]
             self.new_col = coords[1][0]
             self.new_row = coords[1][1]
+            self.move_type = coords[2]
 
             # Check if the move is valid before creating the object
             if not self.__is_place__(board_state, self.curr_col, self.curr_row,
                                      self.new_col, self.new_row, enemy) and \
                 not self.__is_move__(board_state, self.curr_col, self.curr_row,
                                      self.new_col, self.new_row):
+                raise InvalidMoveError("Invalid Move detected...")
+        else:
+            if not self.__is_place__(board_state, col, row, new_col, new_row,
+                                     enemy) and \
+                    not self.__is_move__(board_state, col, row, new_col, new_row):
                 raise InvalidMoveError("Invalid Move detected...")
 
     @classmethod
@@ -56,20 +62,21 @@ class Move:
                             movement move
                         - The value None for forfeited turns where no move
                             can be done
-        :return: A tuple of tuples with the format ((col, row), (new_col, new_row))
+        :return: A tuple of tuples with the format
+                        ((col, row), (new_col, new_row), move_type)
         """
         # Check if it's a forfeited move
         if action is None:
-            return (None, None), (None, None)
+            return (None, None), (None, None), 'forfeit'
         else:
             # Unpack the action to check whether it contains tuples or ints
             val1, val2 = action
             if isinstance(val1, tuple) and isinstance(val2, tuple):
                 # This is movement move
-                return val1, val2
+                return val1, val2, 'move'
             elif isinstance(val1, int) and isinstance(val2, int):
                 # This is a placement move
-                return (val1, val2), (None, None)
+                return (val1, val2), (None, None), 'place'
 
             return None
 

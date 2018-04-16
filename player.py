@@ -5,6 +5,7 @@
 ###
 
 from board_state import *
+from move import *
 
 
 class Player:
@@ -17,8 +18,10 @@ class Player:
         # colour
         if colour == 'white':
             self.enemy = '@'
+            self.piece = 'O'
         else:
             self.enemy = 'O'
+            self.piece = '@'
         # Create an empty board state to fill later
         self.board = BoardState()
         # Counter to store the current turn number
@@ -39,4 +42,6 @@ class Player:
         :param action:
         :return:
         """
+        # Placeholder to update the board from enemy perspective
+        self.board.modify(Move(self.board, action, enemy=self.piece), self.piece)
         return None

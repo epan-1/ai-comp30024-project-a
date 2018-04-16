@@ -169,7 +169,29 @@ class BoardState:
         """
         return self.board[j][i]
 
-    def place_piece(self, move, piece):
+    def modify(self, move, enemy):
+        """
+        This function modifies the board depending on whether move is a place
+        type or move type.
+        :param move: The Move object
+        :param enemy: A character representing the enemy pieces
+        :return: None
+        """
+        # Select our piece
+        if enemy == '@':
+            piece = 'O'
+        else:
+            piece = '@'
+        # Choose the correct movement method
+        if move.move_type == 'place':
+            self.__place_piece__(move, piece)
+        elif move.move_type == 'move':
+            self.__move_piece__(move)
+        else:
+            # The move must have been a forfeit one. Do nothing to the board
+            return
+
+    def __place_piece__(self, move, piece):
         """
         This function adds a piece to the board during the placing phase.
         :param move:
@@ -180,7 +202,7 @@ class BoardState:
         self.board[move.curr_col][move.curr_row] = piece
         return
 
-    def move_piece(self, move):
+    def __move_piece__(self, move):
         """
         This function acts out the move on the board state
         :param move: Move object describing moving a piece

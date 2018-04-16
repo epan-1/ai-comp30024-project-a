@@ -7,9 +7,9 @@ from move import *
 from board_state import *
 
 board = BoardState()
-board.place_piece(Move(board, action=(6, 5), enemy='@'), 'O')
+board.modify(Move(board, action=(6, 5), enemy='@'), 'O')
 print(board)
 action = (6, 5), (6, 6)
 a = Move(board_state=board, action=action, enemy='@')
-board.move_piece(a)
+board.modify(a)
 print(board)

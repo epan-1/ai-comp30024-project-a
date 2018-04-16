@@ -80,8 +80,11 @@ class BoardState:
         To string function that prints out what the board looks like
         :return: None
         """
-        line = ''
+        # Add the numbers as a header
+        line = '  0 1 2 3 4 5 6 7 \n'
         for i in range(len(self.board)):
+            # Add the current row number to the beginning
+            line += str(i) + ' '
             for j in range(len(self.board[i])):
                 # Swap coords since access is done by (col, row) not (row, col)
                 # then add to the current line
@@ -165,6 +168,17 @@ class BoardState:
             at the coordinates
         """
         return self.board[j][i]
+
+    def place_piece(self, move, piece):
+        """
+        This function adds a piece to the board during the placing phase.
+        :param move:
+        :param piece: A character representing the player or enemies piece to be
+                      added.
+        :return: None
+        """
+        self.board[move.curr_col][move.curr_row] = piece
+        return
 
     def move_piece(self, move):
         """

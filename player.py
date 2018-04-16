@@ -21,6 +21,8 @@ class Player:
             self.enemy = 'O'
         # Create an empty board state to fill later
         self.board = BoardState()
+        # Counter to store the current turn number
+        self.turns = 0
 
     def action(self, turns):
         """

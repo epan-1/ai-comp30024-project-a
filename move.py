@@ -13,13 +13,13 @@ class Move:
     """
     This class represents a valid move in the game "Watch your Back!"
     """
-    def __init__(self, board_state, action=None, enemy=None, col=None, row=None,
+    def __init__(self, board_state, enemy=None, col=None, row=None,
                  new_col=None, new_row=None, ):
         """
         A move object contains the coordinates of the piece to be moved as well
         as the coordinates of the new location that the piece will be moved to
-        :param board_state:
-        :param action:
+         :param board_state: BoardState object containing information about the
+                            current state of the game
         :param col: The column number this move refers to. Defaults to None
         :param row: The row number this move refers to. Defaults to None
         :param enemy: A character that represents an enemy piece on the board.
@@ -30,55 +30,20 @@ class Move:
                         Defaults to None when this move is a placing move.
         """
 
-        # Assign the values read from action
-        if action is not None:
-            coords = self.__convert_action__(action)
-            self.curr_col = coords[0][0]
-            self.curr_row = coords[0][1]
-            self.new_col = coords[1][0]
-            self.new_row = coords[1][1]
-            self.move_type = coords[2]
-
-            # Check if the move is valid before creating the object
-            if not self.__is_place__(board_state, self.curr_col, self.curr_row,
-                                     self.new_col, self.new_row, enemy) and \
-                not self.__is_move__(board_state, self.curr_col, self.curr_row,
-                                     self.new_col, self.new_row):
-                raise InvalidMoveError("Invalid Move detected...")
-        else:
-            if not self.__is_place__(board_state, col, row, new_col, new_row,
-                                     enemy) and \
-                    not self.__is_move__(board_state, col, row, new_col, new_row):
-                raise InvalidMoveError("Invalid Move detected...")
-
-    @classmethod
-    def __convert_action__(cls, action):
-        """
-        This method converts the action into an appropriate placement or
-        movement type move.
-        :param action: The following are valid representations of an action
-                        - A single tuple (x,y) representing a placement move
-                        - A tuple of tuples ((a,b), (c,d) representing a
-                            movement move
-                        - The value None for forfeited turns where no move
-                            can be done
-        :return: A tuple of tuples with the format
-                        ((col, row), (new_col, new_row), move_type)
-        """
-        # Check if it's a forfeited move
-        if action is None:
-            return (None, None), (None, None), 'forfeit'
-        else:
-            # Unpack the action to check whether it contains tuples or ints
-            val1, val2 = action
-            if isinstance(val1, tuple) and isinstance(val2, tuple):
-                # This is movement move
-                return val1, val2, 'move'
-            elif isinstance(val1, int) and isinstance(val2, int):
-                # This is a placement move
-                return (val1, val2), (None, None), 'place'
-
-            return None
+        # Check if the move is valid before creating the object
+            # if not self.__is_place__(board_state, self.curr_col, self.curr_row,
+            #                          self.new_col, self.new_row, enemy) and \
+            #     not self.__is_move__(board_state, self.curr_col, self.curr_row,
+            #                          self.new_col, self.new_row):
+            #     raise InvalidMoveError("Invalid Move detected...")
+        self.curr_col = col
+        self.curr_row = row
+        self.new_col = new_col
+        self.new_row = new_row
+        if not self.__is_place__(board_state, col, row, new_col, new_row,
+                                 enemy) and \
+                not self.__is_move__(board_state, col, row, new_col, new_row):
+            raise InvalidMoveError("Invalid Move detected...")
 
     def __eq__(self, other):
         """
@@ -131,6 +96,8 @@ class Move:
         if new_col is not None or new_row is not None or enemy is None:
             return False
         # Now proceed to check if the coordinates specified are valid
+        if col is None or row is None:
+            return False
         # Variables to determine the range of rows that white or black players
         # are allowed to place their pieces onto
         min_row = 0
@@ -142,8 +109,9 @@ class Move:
         elif enemy == 'O':
             max_row = 5
 
-        if 1 <= col <= 6 and min_row <= row <= max_row:
-            # Now check if the space is already occupied
+        if min_row <= row <= max_row:
+            # Now check that the space is not occupied and is also not a corner
+            # location
             if board_state.board[col][row] == '-':
                 return True
         # Otherwise not a valid placing move

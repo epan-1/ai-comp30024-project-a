@@ -15,7 +15,7 @@ class Player:
     """
     def __init__(self, colour):
         # Assign the character representing enemy pieces depending on the player
-        # colour
+        # colour as well as what the player's piece is
         if colour == 'white':
             self.enemy = '@'
             self.piece = 'O'

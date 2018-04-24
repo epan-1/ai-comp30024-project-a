@@ -36,9 +36,13 @@ class BoardState:
         """
 
         # Coordinate access is of the format self.board[col][row]. Initialise
-        # all values to empty spaces denoted by "-"
+        # all values to empty spaces denoted by "-" as well as adding in the
+        # initial corner squares.
         self.board = [['-' for j in range(self.NUM_ROWS)]
                       for i in range(self.NUM_COLS)]
+        for coord in [(0, 0), (7, 0), (7, 7), (0, 7)]:
+            col, row = coord
+            self.board[col][row] = 'X'
 
         # If ins_type is 'N' then do nothing and just assign the empty board
         if ins_type == 'N':
@@ -169,11 +173,11 @@ class BoardState:
         """
         return self.board[j][i]
 
-    def modify(self, move, enemy):
+    def modify(self, action, enemy):
         """
         This function modifies the board depending on whether move is a place
         type or move type.
-        :param move: The Move object
+        :param action: The Action object
         :param enemy: A character representing the enemy pieces
         :return: None
         """
@@ -183,10 +187,10 @@ class BoardState:
         else:
             piece = '@'
         # Choose the correct movement method
-        if move.move_type == 'place':
-            self.__place_piece__(move, piece)
-        elif move.move_type == 'move':
-            self.__move_piece__(move)
+        if action.move_type == 'place':
+            self.__place_piece__(action.move, piece)
+        elif action.move_type == 'move':
+            self.__move_piece__(action.move)
         else:
             # The move must have been a forfeit one. Do nothing to the board
             return

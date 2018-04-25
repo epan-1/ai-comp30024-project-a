@@ -6,6 +6,7 @@
 
 from board_state import *
 from action import *
+from placing_strategy import *
 
 
 class Player:
@@ -35,16 +36,19 @@ class Player:
         :return: A tuple if it is a placement action, a tuple of tuples if it is
                  a movement action and None if it is a forfeit action.
         """
+        # Start off with a forfeited move and see if we can do anything
+        action = None
         # Increment total turns every time this method is called
         self.total_turns += 1
         # Placing phase continues until we reach our 13th action
         if self.total_turns <= 12:
-
+            action = do_random_place(self.board, self.enemy)
+            self.board.modify(action, self.enemy)
         # Consider the shrinking phases. Before the start of turns 128 and 192
         # So on turn 126 or 127, 190 or 191 depending on which player will be
         # the last chance to escape shrinkage etc.
 
-        return None
+        return action
 
     def update(self, action):
         """

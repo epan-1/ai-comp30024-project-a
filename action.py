@@ -20,7 +20,7 @@ class Action:
         :param action: Value representing a placing action which is a single
                        tuple, a movement action which is a tuple of tuples and
                        a forfeited action which is simple the None value
-        :param enemy:
+        :param enemy: A character that represents the enemy piece
         """
         # Assign the values read from action
         coords = self.__convert_action__(action)
@@ -30,6 +30,13 @@ class Action:
         new_row = coords[1][1]
         self.move_type = coords[2]
         self.move = Move(board_state, enemy, curr_col, curr_row, new_col, new_row)
+
+    def __str__(self):
+        """
+        Function that returns the string representation of the action
+        :return:
+        """
+        return str(self.return_action())
 
     @classmethod
     def __convert_action__(cls, action):

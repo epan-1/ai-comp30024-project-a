@@ -31,11 +31,6 @@ class Move:
         """
 
         # Check if the move is valid before creating the object
-            # if not self.__is_place__(board_state, self.curr_col, self.curr_row,
-            #                          self.new_col, self.new_row, enemy) and \
-            #     not self.__is_move__(board_state, self.curr_col, self.curr_row,
-            #                          self.new_col, self.new_row):
-            #     raise InvalidMoveError("Invalid Move detected...")
         self.curr_col = col
         self.curr_row = row
         self.new_col = new_col
@@ -104,10 +99,10 @@ class Move:
         max_row = 7
         # If our player is using black pieces
         if enemy == '@':
-            min_row = 2
+            max_row = 5
         # If our player is using white pieces
         elif enemy == 'O':
-            max_row = 5
+            min_row = 2
 
         if min_row <= row <= max_row:
             # Now check that the space is not occupied and is also not a corner

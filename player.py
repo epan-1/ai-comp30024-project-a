@@ -5,7 +5,7 @@
 ###
 
 from board_state import *
-from move import *
+from action import *
 
 
 class Player:
@@ -24,15 +24,26 @@ class Player:
             self.piece = '@'
         # Create an empty board state to fill later
         self.board = BoardState()
-        # Counter to store the current turn number
-        self.turns = 0
+        # Counter to store the number of turns the player has done since the
+        # start of the game
+        self.total_turns = 0
 
     def action(self, turns):
         """
         Method called by referee program to request an action from the player.
         :param turns:
-        :return:
+        :return: A tuple if it is a placement action, a tuple of tuples if it is
+                 a movement action and None if it is a forfeit action.
         """
+        # Increment total turns every time this method is called
+        self.total_turns += 1
+        # Placing phase continues until we reach our 13th action
+        if self.total_turns <= 12:
+
+        # Consider the shrinking phases. Before the start of turns 128 and 192
+        # So on turn 126 or 127, 190 or 191 depending on which player will be
+        # the last chance to escape shrinkage etc.
+
         return None
 
     def update(self, action):
@@ -43,5 +54,5 @@ class Player:
         :return:
         """
         # Placeholder to update the board from enemy perspective
-        self.board.modify(Move(self.board, action, enemy=self.piece), self.piece)
+        self.board.modify(Action(self.board, action, enemy=self.piece), self.piece)
         return None
